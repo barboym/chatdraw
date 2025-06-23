@@ -1,0 +1,50 @@
+[
+  {
+    "title": "Step 1: Draw the Apple Outline",
+    "instruction": "Use the pencil or brush tool to draw a large, rounded shape in the center. Slightly flatten the bottom to reflect the apple's natural base.",
+    "extended_instruction": "Select black and choose a medium-thickness pencil or brush. In the middle of your white canvas, draw a rounded shape—closer to a circle than an oval, but not perfectly symmetrical. At the bottom, add a small dip or bump to mimic where the apple meets a surface. Don’t worry about perfection—natural wobbles add character. The drawing at this step should contain only this outline.",
+    "tips": [
+      "Apples are naturally asymmetrical—avoid perfect circles.",
+      "Try to center the apple shape on the canvas.",
+      "Use short strokes for more control.",
+      "Undo freely if the shape doesn't feel right.",
+      "Leave space above for the stem and leaf."
+    ]
+  },
+  {
+    "title": "Step 2: Add the Stem",
+    "instruction": "Draw a short, thick stem emerging from the top middle of the apple. Slightly curve it to the left or right.",
+    "extended_instruction": "Switch to a slightly thinner brush or pencil. On the top of the apple, in the center, draw a small upward stroke curving gently to one side. Make the base of the stem thicker than the tip. Don’t add any extra lines or details yet—just the single stem. It should clearly emerge from within the apple's top curve.",
+    "tips": [
+      "Keep the stem short and sturdy-looking.",
+      "Curve it slightly for a more natural look.",
+      "Avoid placing the stem too far off-center.",
+      "The stem should be black, like the rest of the sketch.",
+      "Resist adding the leaf at this stage."
+    ]
+  },
+  {
+    "title": "Step 3: Draw the Leaf",
+    "instruction": "Add a pointed, almond-shaped leaf to the right side of the stem. Use two curved strokes to form the outline.",
+    "extended_instruction": "Using a thin brush or pencil, start from the base of the stem and draw a short curved line extending out diagonally to the right. Then bring it back in to form a closed almond or eye-like shape. Make sure it points outward and up slightly. You can optionally add a simple curved center vein inside the leaf. This completes the main external features of the apple.",
+    "tips": [
+      "The leaf should be smaller than the apple's body.",
+      "Use soft curves to form the shape.",
+      "Keep the outline smooth and connected.",
+      "Make the leaf emerge from the base of the stem.",
+      "Avoid cluttering—one leaf is enough."
+    ]
+  },
+  {
+    "title": "Step 4: Add Simple Inner Detail Lines",
+    "instruction": "Draw a couple of soft curved lines on the right side of the apple to suggest volume. These lines follow the curve of the apple's surface.",
+    "extended_instruction": "Select the thin brush again. On the apple's right side, inside the body, draw two short curved lines—one longer than the other—to indicate form. These are not shadows, just suggestive contour lines. Keep them smooth and spaced slightly apart. They help the apple feel round and three-dimensional without adding real shading.",
+    "tips": [
+      "Don't place the lines in the center—keep them to one side.",
+      "Avoid making them too bold or too many.",
+      "Follow the shape of the apple's outer curve.",
+      "Think of the lines as gentle echoes of the edge.",
+      "Check balance—lines should complement, not distract."
+    ]
+  }
+]
