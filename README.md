@@ -1,5 +1,5 @@
 
-This projects objective is to create a chatboy that teaches you to draw simple sketches in mspaint-like apps (where I invision using the edit feature in whatsapp in practice) 
+This projects objective is to create a chatbot that teaches you to draw simple sketches in mspaint-like apps (where I invision using the edit feature in whatsapp in practice) 
 
 TODO (high level): 
 - sketch tutorial generator - most of it is available from reasearch 
