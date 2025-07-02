@@ -1,4 +1,5 @@
 openai
-ipykernel
-fastapi
+fastapi[standard]
 Pillow
+uvicorn
+pydantic
