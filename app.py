@@ -1,12 +1,12 @@
 import re
-from fastapi import FastAPI, UploadFile, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, HTTPException
 from PIL import Image
 import io
 from pydantic import BaseModel
-from typing import Any, Optional
+from typing import Any
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
+from enum import Enum
 
 app = FastAPI()
 
@@ -19,9 +19,13 @@ app.add_middleware( # change in production
     allow_headers=["*"],
 )
 
+class MessageType(Enum):
+    TEXT = "text"
+    IMAGE = "image"
+
 class ChatMessage(BaseModel):
-    text: Optional[str] = None
-    image: Optional[str] = None
+    type: MessageType
+    data: str
 
 def check_malicious_code(text: str) -> bool:
     # Check for potential script tags or suspicious patterns
@@ -45,49 +49,38 @@ def check_malicious_code(text: str) -> bool:
 async def process(
     message: ChatMessage
 ) -> Any:
-    # return message
-    text = message.text
-    image = message.image
-    # Check that either text or image is provided, but not both
-    if (text is None and image is None) or (text is not None and image is not None):
-        raise HTTPException(
-            status_code=400,
-            detail="You must provide either text or an image, but not both or neither"
-        )
-
-    
-    response = None 
-    # Process text
-    if text is not None:
+    # Process message based on type
+    if message.type == MessageType.TEXT:
         # Check text length
-        if len(text) > 200:
+        if len(message.data) > 200:
             raise HTTPException(
                 status_code=400,
                 detail="Text must not exceed 200 characters"
             )
 
         # Check for malicious code
-        if check_malicious_code(text):
+        if check_malicious_code(message.data):
             raise HTTPException(
                 status_code=400,
                 detail="Potentially unsafe content detected in text"
             )
 
         # Process the text (here we just echo it back)
-        response = ChatMessage(text = f"Processed text: {text}")
+        return ChatMessage(type=MessageType.TEXT, data=f"Processed text: {message.data}")
 
-    # Process image
-    if image is not None:
+    elif message.type == MessageType.IMAGE:
         try:
-            contents = await image.read()
-            img = Image.open(io.BytesIO(contents))
+            # Decode base64 image
+            import base64
+            image_data = base64.b64decode(message.data)
+            img = Image.open(io.BytesIO(image_data))
 
             # Check if it's a PNG
             if img.format != "PNG":
                 raise HTTPException(
                     status_code=400,
-                    detail="Image must be in PNG format"
-                )
+                        detail="Image must be in PNG format"
+                    )
 
             # Check if width is 200px
             if img.width != 200:
@@ -96,12 +89,8 @@ async def process(
                     detail=f"Image width must be 200px (got {img.width}px)"
                 )
 
-            # Process the image (here we just echo it back as base64)
-            import base64
-            buffered = io.BytesIO()
-            img.save(buffered, format="PNG")
-            img_str = base64.b64encode(buffered.getvalue()).decode()
-            response = ChatMessage(text = "Image processed successfully",mage_data = img_str)
+            # Process the image (here we just echo it back with a message)
+            return ChatMessage(type=MessageType.TEXT, data="Image processed successfully")
 
         except Exception as e:
             raise HTTPException(
@@ -109,7 +98,11 @@ async def process(
                 detail=f"Error processing image: {str(e)}"
             )
 
-    return response
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid message type"
+        )
 
 
 if __name__ == "__main__":
