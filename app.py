@@ -26,8 +26,8 @@ class MessageType(Enum):
 class ChatMessage(BaseModel):
     type: MessageType
     data: str
-    # concept: Optional[str]
-    # currstep: Optional[int]
+    concept: str
+    currstep: int
 
 def check_malicious_code(text: str) -> bool:
     # Check for potential script tags or suspicious patterns
@@ -48,7 +48,7 @@ def check_malicious_code(text: str) -> bool:
     return False
 
 @app.post("/", response_model=ChatMessage)
-async def process(
+async def main(
     message: ChatMessage
 ) -> Any:
     # Process message based on type
@@ -68,7 +68,11 @@ async def process(
             )
 
         # Process the text (here we just echo it back)
-        return ChatMessage(type=MessageType.TEXT, data=f"Processed text: {message.data}")
+        return ChatMessage(
+            type=MessageType.TEXT, 
+            data=f"Processed text: {message.data}",
+            concept=message.concept,
+            currstep=message.currstep+1)
 
     elif message.type == MessageType.IMAGE:
         try:
@@ -92,7 +96,12 @@ async def process(
                 )
 
             # Process the image (here we just echo it back with a message)
-            return ChatMessage(type=MessageType.TEXT, data="Image processed successfully")
+            return ChatMessage(
+                type=MessageType.TEXT, 
+                data="Image processed successfully",
+                concept=message.concept,
+                currstep=message.currstep
+            )
 
         except Exception as e:
             raise HTTPException(
