@@ -3,7 +3,7 @@ from fastapi import FastAPI, HTTPException
 from PIL import Image
 import io
 from pydantic import BaseModel
-from typing import Any
+from typing import Any, Optional
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from enum import Enum
@@ -26,6 +26,8 @@ class MessageType(Enum):
 class ChatMessage(BaseModel):
     type: MessageType
     data: str
+    # concept: Optional[str]
+    # currstep: Optional[int]
 
 def check_malicious_code(text: str) -> bool:
     # Check for potential script tags or suspicious patterns
@@ -45,7 +47,7 @@ def check_malicious_code(text: str) -> bool:
             return True
     return False
 
-@app.post("/process", response_model=ChatMessage)
+@app.post("/", response_model=ChatMessage)
 async def process(
     message: ChatMessage
 ) -> Any:
@@ -106,4 +108,4 @@ async def process(
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
