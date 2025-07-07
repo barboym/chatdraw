@@ -1,13 +1,14 @@
 import json
 import re
 import xmltodict
-import subprocess
 import pathlib
 import anthropic
 from prompts import sketch_first_prompt, system_prompt, gt_example
+import psycopg2
 
-def get_sketch(
-    concept = 'caterpillar',
+
+def get_sketch_using_anthropic_llm(
+    concept,
     model = 'claude-3-5-sonnet-20240620',
     sketch_first_prompt=sketch_first_prompt, 
     system_prompt=system_prompt, 
@@ -41,21 +42,35 @@ def extract_xml(text: str, tag: str) -> str:
     return f'<{tag}>{match.group(1)}</{tag}>' if match else ""
 
 def load_tutorial(concept):
-    path = f"/home/mos/exercises/chatprojects/SketchAgent/results/test/{concept}/experiment_log.json"
-    if not pathlib.Path(path).exists(): # creating the sketch is costly
-        subprocess.run(
-            ["/home/mos/miniconda3/envs/sketch_agent/bin/python", 
-             "/home/mos/exercises/chatprojects/SketchAgent/gen_sketch.py", 
-             "--concept_to_draw", 
-             concept, 
-             "--path2save",
-             path,
-            ])
-    with open(path) as f:
-        txt_response = json.load(f)[2]["content"][0]["text"]
+    # First, try to fetch from postgres db
+    try:
+        conn = psycopg2.connect("dbname=sketch_db user=postgres")
+        cur = conn.cursor()
+        cur.execute("SELECT sketch_data FROM sketches WHERE concept = %s", (concept,))
+        result = cur.fetchone()
 
-    answer = extract_xml(txt_response+"</answer>","answer")
-    answer_dict = xmltodict.parse(answer)
+        if result:
+            # Found in database
+            answer_dict = result[0]
+        else:
+            # Not found, generate using LLM
+            response = get_sketch_using_anthropic_llm(concept)
+            txt_response = response.content
+            answer = extract_xml(txt_response+"</answer>", "answer")
+            answer_dict = xmltodict.parse(answer)
+            # Store in database
+            cur.execute(
+                "INSERT INTO sketches (concept, sketch_data, text_response) VALUES (%s, %s, %s)",
+                (concept, answer_dict, txt_response)
+            )
+            conn.commit()
+
+        cur.close()
+        conn.close()
+    except Exception as e:
+        raise e
+     
+    
     concept = answer_dict["answer"]["concept"]
     strokes = answer_dict["answer"]["strokes"]
     # tvalues = answer_dict["answer"][""]

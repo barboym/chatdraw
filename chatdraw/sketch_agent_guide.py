@@ -1,6 +1,8 @@
 
 from chatdraw.tutorial_creator_sketchagent import load_tutorial
-
+from chatdraw.utils import pixels_to_strokes
+import numpy as np
+from scipy.interpolate import interp1d
 
 # def response(response_type: str, response_data: str, concept: str, current_step: int) -> str:
 #     """
@@ -35,7 +37,7 @@ from chatdraw.tutorial_creator_sketchagent import load_tutorial
 #         return "wrong message type"
 
 
-def tutorial_response(response_data: list[tuple[int,int]], step: int,  tutorial: str|list) -> tuple[str,int]:
+def tutorial_response(response_data: list[(int,int)], step: int,  tutorial: str|list) -> (str,int):
     """
     Process user response (image or text) and provide feedback.
 
@@ -54,17 +56,27 @@ def tutorial_response(response_data: list[tuple[int,int]], step: int,  tutorial:
             "You succesfully completed the tutorial.\n", 
             step+1
         )
-    # TODO: calculate distance measures. 
-    # if step>0: 
-    #     pass
-    #     strokes = pixels_to_strokes(tutorial)
-    #     draw_stroke = strokes[step]
-
     draw_step = tutorial[step]
+    # TODO: calculate distance measures. 
     return (
         f"""Draw the {draw_step['name']} next.\n""",
         step+1
     )
+
+def make_smooth_stroke(draw_stroke):
+    draw_stroke = np.array(draw_stroke)
+    n=len(draw_stroke)
+    interp_method=None
+    if n in [1,2]:
+        return draw_stroke
+    elif n==3:
+        interp_method='quadratic'
+    else:
+        interp_method='cubic'
+    return np.c_[
+        interp1d(np.linspace(0,1,len(draw_stroke)),draw_stroke[:,0],kind=interp_method)(np.linspace(0,1,100)), 
+        interp1d(np.linspace(0,1,len(draw_stroke)),draw_stroke[:,1],kind=interp_method)(np.linspace(0,1,100))
+    ]
 
 if __name__ == "__main__":
     print(

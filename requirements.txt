@@ -6,3 +6,5 @@ uvicorn
 pydantic
 scipy
 xmltodict
+psycopg2
+python-dotenv
