@@ -3,7 +3,28 @@ import re
 import xmltodict
 import subprocess
 import pathlib
+import anthropic
+from prompts import sketch_first_prompt, system_prompt, gt_example
 
+def get_sketch(
+    concept = 'caterpillar',
+    model = 'claude-3-5-sonnet-20240620',
+    sketch_first_prompt=sketch_first_prompt, 
+    system_prompt=system_prompt, 
+    gt_example=gt_example,
+):
+    return anthropic.Anthropic().messages.create(**{
+        'model':model,
+        'max_tokens':3000,
+        'system': system_prompt.replace('{res}',str(50)),
+        'messages':[{
+            "role":"user",
+            "content":sketch_first_prompt.replace('{concept}',concept).replace('{gt_sketches_str}',gt_example)
+        }],
+        'temperature':0,
+        'top_k':1,
+        'stop_sequences':['</answer>'],
+    })
 
 def extract_xml(text: str, tag: str) -> str:
     """

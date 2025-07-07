@@ -3,10 +3,11 @@ from fastapi import FastAPI, HTTPException
 from PIL import Image
 import io
 from pydantic import BaseModel
-from typing import Any, Optional
+from typing import Any
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from enum import Enum
+from chatdraw.sketch_agent_guide import tutorial_response
 
 app = FastAPI()
 
@@ -27,7 +28,9 @@ class ChatMessage(BaseModel):
     type: MessageType
     data: str
     concept: str
-    currstep: int
+    step: int
+
+
 
 def check_malicious_code(text: str) -> bool:
     # Check for potential script tags or suspicious patterns
@@ -51,69 +54,81 @@ def check_malicious_code(text: str) -> bool:
 async def main(
     message: ChatMessage
 ) -> Any:
+    
+    text_response, next_step = tutorial_response(
+        [],
+        message.step,
+        message.concept,
+    )
+    return ChatMessage(
+        type=MessageType.TEXT,
+        data=text_response,
+        concept=message.concept,
+        step=next_step,
+    )
     # Process message based on type
-    if message.type == MessageType.TEXT:
-        # Check text length
-        if len(message.data) > 200:
-            raise HTTPException(
-                status_code=400,
-                detail="Text must not exceed 200 characters"
-            )
+    # if message.type == MessageType.TEXT:
+    #     # Check text length
+    #     if len(message.data) > 200:
+    #         raise HTTPException(
+    #             status_code=400,
+    #             detail="Text must not exceed 200 characters"
+    #         )
 
-        # Check for malicious code
-        if check_malicious_code(message.data):
-            raise HTTPException(
-                status_code=400,
-                detail="Potentially unsafe content detected in text"
-            )
+    #     # Check for malicious code
+    #     if check_malicious_code(message.data):
+    #         raise HTTPException(
+    #             status_code=400,
+    #             detail="Potentially unsafe content detected in text"
+    #         )
 
-        # Process the text (here we just echo it back)
-        return ChatMessage(
-            type=MessageType.TEXT, 
-            data=f"Processed text: {message.data}",
-            concept=message.concept,
-            currstep=message.currstep+1)
+    #     # Process the text (here we just echo it back)
+    #     return ChatMessage(
+    #         type=MessageType.TEXT, 
+    #         data=f"Processed text: {message.data}",
+    #         concept=message.concept,
+    #         currstep=message.currstep+1)
 
-    elif message.type == MessageType.IMAGE:
-        try:
-            # Decode base64 image
-            import base64
-            image_data = base64.b64decode(message.data)
-            img = Image.open(io.BytesIO(image_data))
+    # elif message.type == MessageType.IMAGE:
+    #     try:
+    #         # Decode base64 image
+    #         import base64
+    #         image_data = base64.b64decode(message.data)
+    #         img = Image.open(io.BytesIO(image_data))
 
-            # Check if it's a PNG
-            if img.format != "PNG":
-                raise HTTPException(
-                    status_code=400,
-                        detail="Image must be in PNG format"
-                    )
+    #         # Check if it's a PNG
+    #         if img.format != "PNG":
+    #             raise HTTPException(
+    #                 status_code=400,
+    #                     detail="Image must be in PNG format"
+    #                 )
 
-            # Check if width is 200px
-            if img.width != 200:
-                raise HTTPException(
-                    status_code=400,
-                    detail=f"Image width must be 200px (got {img.width}px)"
-                )
+    #         # Check if width is 200px
+    #         if img.width != 200:
+    #             raise HTTPException(
+    #                 status_code=400,
+    #                 detail=f"Image width must be 200px (got {img.width}px)"
+    #             )
 
-            # Process the image (here we just echo it back with a message)
-            return ChatMessage(
-                type=MessageType.TEXT, 
-                data="Image processed successfully",
-                concept=message.concept,
-                currstep=message.currstep
-            )
+    #         # Process the image (here we just echo it back with a message)
+    #         return ChatMessage(
+    #             type=MessageType.TEXT, 
+    #             data="Image processed successfully",
+    #             concept=message.concept,
+    #             currstep=message.currstep
+    #         )
 
-        except Exception as e:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Error processing image: {str(e)}"
-            )
+    #     except Exception as e:
+    #         raise HTTPException(
+    #             status_code=400,
+    #             detail=f"Error processing image: {str(e)}"
+    #         )
 
-    else:
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid message type"
-        )
+    # else:
+    #     raise HTTPException(
+    #         status_code=400,
+    #         detail="Invalid message type"
+    #     )
 
 
 if __name__ == "__main__":
