@@ -3,6 +3,7 @@ import re
 import xmltodict
 import pathlib
 import anthropic
+from chatdraw.utils import get_db_connection
 from prompts import sketch_first_prompt, system_prompt, gt_example
 import psycopg2
 from dotenv import load_dotenv
@@ -17,11 +18,12 @@ def get_sketch_using_anthropic_llm(
     sketch_first_prompt=sketch_first_prompt, 
     system_prompt=system_prompt, 
     gt_example=gt_example,
+    res=50,
 ):
     return anthropic.Anthropic().messages.create(**{
         'model':model,
         'max_tokens':3000,
-        'system': system_prompt.replace('{res}',str(50)),
+        'system': system_prompt.replace('{res}',str(res)),
         'messages':[{
             "role":"user",
             "content":sketch_first_prompt.replace('{concept}',concept).replace('{gt_sketches_str}',gt_example)
@@ -30,6 +32,7 @@ def get_sketch_using_anthropic_llm(
         'top_k':1,
         'stop_sequences':['</answer>'],
     })
+
 
 def extract_xml(text: str, tag: str) -> str:
     """
@@ -45,6 +48,23 @@ def extract_xml(text: str, tag: str) -> str:
     match = re.search(f'<{tag}>(.*?)</{tag}>', text, re.DOTALL)
     return f'<{tag}>{match.group(1)}</{tag}>' if match else ""
 
+def add_concept_to_db(concept):
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    model_response = get_sketch_using_anthropic_llm(concept)
+    txt_response = model_response.content[0].text
+    answer = extract_xml(txt_response+"</answer>", "answer")
+    answer_dict = xmltodict.parse(answer)
+    model_name = model_response.model
+    cur.execute("""
+        INSERT INTO sketch (concept, model_json, model_name)
+        VALUES (%s, %s, %s)
+    """, (concept, answer_dict, model_name))
+    cur.close()
+    conn.close()
+
+    
 def load_tutorial(concept):
     # First, try to fetch from postgres db
     try:
