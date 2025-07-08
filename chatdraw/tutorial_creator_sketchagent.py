@@ -5,6 +5,10 @@ import pathlib
 import anthropic
 from prompts import sketch_first_prompt, system_prompt, gt_example
 import psycopg2
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 
 def get_sketch_using_anthropic_llm(
@@ -44,7 +48,7 @@ def extract_xml(text: str, tag: str) -> str:
 def load_tutorial(concept):
     # First, try to fetch from postgres db
     try:
-        conn = psycopg2.connect("dbname=sketch_db user=postgres")
+        conn = psycopg2.connect("dbname=sketches user=myuser")
         cur = conn.cursor()
         cur.execute("SELECT sketch_data FROM sketches WHERE concept = %s", (concept,))
         result = cur.fetchone()
@@ -71,15 +75,7 @@ def load_tutorial(concept):
         raise e
      
     
-    concept = answer_dict["answer"]["concept"]
-    strokes = answer_dict["answer"]["strokes"]
-    # tvalues = answer_dict["answer"][""]
-    tutorial = [{
-        "name": el['id'],
-        "points":el["points"],
-        "t_values":el["t_values"]
-    } for el in strokes.values()]
-    return tutorial
+    return answer_dict
 
 
 if __name__ == "__main__":
