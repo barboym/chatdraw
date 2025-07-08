@@ -13,7 +13,8 @@
                 "app:app",
                 "--reload"
             ],
-            "jinja": true
+            "jinja": true,
+            "cwd": "${fileDirname}"
         }
     ]
 }

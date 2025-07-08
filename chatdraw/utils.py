@@ -1,7 +1,14 @@
 
 from PIL import Image
 import re
+import psycopg2
+import dotenv
+import os
 
+def get_db_connection():
+    dotenv.load_dotenv()
+    conn = psycopg2.connect(f"host=my-postgres dbname=postgres user={os.environ['DB_CLIENUSER']} password={os.environ['DB_CLIENPASSWORD']}")
+    return conn
 
 def get_empty_image(width=500,height=500):
     return Image.new('RGB', (height, width), color='white')

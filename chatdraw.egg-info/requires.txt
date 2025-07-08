@@ -1,0 +1,10 @@
+openai
+anthropic
+fastapi[standard]
+Pillow
+uvicorn
+pydantic
+scipy
+xmltodict
+psycopg2
+python-dotenv
