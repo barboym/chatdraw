@@ -11,6 +11,15 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+DEFAULT_TUTORIAL_LIST = (
+    "giraffe",
+    "monkey",
+    "banana",
+    "speaker",
+    "superman",
+    "pen-pineapple-apple-pen",
+)
+
 
 def get_sketch_using_anthropic_llm(
     concept,
@@ -58,15 +67,17 @@ def add_concept_to_db(concept):
         answer_dict = xmltodict.parse(answer)
         model_name = model_response.model
         cur.execute("""
-            SELECT concept FROM sketch WHERE concept=%s
+            SELECT concept FROM sketch WHERE concept=%s LIMIT 1
         """, (concept,))
         if cur.fetchone() is not None: 
-            print("This concept is already available")
+            print(f"The {concept} concept is already available")
             return 
         cur.execute("""
             INSERT INTO sketch (concept, model_json, model_name)
             VALUES (%s, %s, %s)
         """, (concept, json.dumps(answer_dict), model_name))
+        conn.commit()
+        print(f"Added the {concept} to the db")
         return answer_dict
     finally:
         cur.close()
@@ -91,7 +102,11 @@ def load_tutorial(concept):
     return answer_dict
 
 
+
 if __name__ == "__main__":
     # Example usage
-    tutorial = load_tutorial("giraffe")
+    tutorial = add_concept_to_db("giraffe")
     print(tutorial)
+
+    for concept in DEFAULT_TUTORIAL_LIST:
+        add_concept_to_db(concept)

@@ -34,5 +34,5 @@ def test_insert_query():
         conn.close()
 
 if __name__=="__main__":
-
+    test_connection_works()
     test_insert_query()

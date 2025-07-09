@@ -1,13 +1,11 @@
 import re
-from fastapi import FastAPI, HTTPException
-from PIL import Image
-import io
+from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import Any
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from enum import Enum
-from chatdraw.sketch_agent_guide import tutorial_response
+# from chatdraw.sketch_agent_guide import tutorial_response
 
 app = FastAPI()
 
@@ -54,18 +52,18 @@ def check_malicious_code(text: str) -> bool:
 async def main(
     message: ChatMessage
 ) -> Any:
-    
-    text_response, next_step = tutorial_response(
-        [],
-        message.step,
-        message.concept,
-    )
-    return ChatMessage(
-        type=MessageType.TEXT,
-        data=text_response,
-        concept=message.concept,
-        step=next_step,
-    )
+    pass
+    # text_response, next_step = tutorial_response(
+    #     [],
+    #     message.step,
+    #     message.concept,
+    # )
+    # return ChatMessage(
+    #     type=MessageType.TEXT,
+    #     data=text_response,
+    #     concept=message.concept,
+    #     step=next_step,
+    # )
     # Process message based on type
     # if message.type == MessageType.TEXT:
     #     # Check text length
