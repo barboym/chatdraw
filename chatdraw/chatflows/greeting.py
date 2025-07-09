@@ -15,21 +15,20 @@ class GreetingProject(ProjectHandler):
     def __init__(self, available_projects: List[str]):
         self.available_projects = available_projects
         
-    def get_dialogue(self) -> Dict[str,Any]:
+    def handle_message(self,message: ChatMessage) -> ChatResponse:
         return {
             "start":self._start,
             "namecollect":self._name_collect,
             "chooseproject":self._choose_project,
-        }
+        }[message.context](message.message)
     
-    def _start(self, message:ChatMessage) -> ChatResponse:
+    def _start(self, message:str) -> ChatResponse:
         return ChatResponse(response="",next_context="")
 
-    def _name_collect(self, message:ChatMessage) -> ChatResponse:
+    def _name_collect(self, message:str) -> ChatResponse:
         return ChatResponse(response="",next_context="")
 
-
-    def _choose_project(self, message:ChatMessage) -> ChatResponse:
+    def _choose_project(self, message:str) -> ChatResponse:
         return ChatResponse(response="",next_context="")
 
 

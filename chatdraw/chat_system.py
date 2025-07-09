@@ -17,37 +17,25 @@ class ProjectHandler(ABC):
     """Base class for all handlers including greeting"""
     
     @abstractmethod
-    def _get_dialogue(self) -> Dict[str,Any]:
-        pass 
-
     def handle_message(self, message: ChatMessage) -> ChatResponse:
         """Handle message processing"""
-        context = message.context
-        message_txt = message.message.strip()
-        
-        next_context,response = self._get_dialogue()[context](message_txt)
-        return ChatResponse(
-            response=response,
-            next_context=next_context
-        )
+        pass
 
 
 class DefaultProjectHandler(ProjectHandler):
     """Base class for all handlers including greeting"""
     
-    def _get_dialogue(self) -> Dict[str,Any]:
+    def handle_message(self, message: ChatMessage) -> ChatResponse:
         """Handle message processing"""
-        return {
-            "start":lambda message_txt:ChatResponse(
-                response="I can tell you want to talk. Say something.",
-                next_context=message_txt,
-            )
-        }
+        return ChatResponse(
+            response="I can tell you want to talk. Say something.",
+            next_context=message.context,
+        )
+    
 
 
 class ChatHandler:
     """Simple dispatcher - just routes to the current project"""
-    
     def __init__(self):
         self.projects: Dict[str, ProjectHandler] = {
             "default":DefaultProjectHandler()
@@ -75,9 +63,9 @@ class ChatHandler:
             projects_next_context = current_project + "_" + project_response.next_context
         return ChatResponse(
             response=project_response.response,
-            next_context=".".join(context_list + [projects_next_context]),
+            next_context=".".join(context_list[:-1] + [projects_next_context]),
         )
      
 
 if __name__=="__main__":
-    print(ChatHandler().process_message(ChatMessage(message="hey there",context="start")))
+    print(ChatHandler().process_message(ChatMessage(message="hey there",context="some_start")))
