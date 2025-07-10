@@ -1,6 +1,6 @@
 from enum import Enum
 from typing import Any, Dict, List
-from chatdraw.chat_system import ChatMessage, ChatResponse, ProjectHandler
+from chatdraw.chat_system import ChatHandler, ChatMessage, ChatResponse, ProjectHandler
 
 
 class GreetingProjectStates(Enum):
@@ -31,5 +31,7 @@ class GreetingProject(ProjectHandler):
     def _choose_project(self, message:str) -> ChatResponse:
         return ChatResponse(response="",next_context="")
 
-
+if __name__=="__main__":
+    ch = ChatHandler()
+    ch.register_project("greeting",GreetingProject(available_projects=[]))
     

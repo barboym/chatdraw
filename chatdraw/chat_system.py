@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
 
@@ -58,9 +58,23 @@ class ChatHandler:
             )
         )
 
+        # in case project ends the context is empty 
         projects_next_context = ""
+        # if a project continues the response is non empty
         if project_response.next_context!="":
             projects_next_context = current_project + "_" + project_response.next_context
+        # if the project dives into another project, we process a different message
+        if "." in projects_next_context:
+            next_respose = self.process_message(
+                ChatMessage(
+                    message="",
+                    context=".".join(context_list[:-1] + [projects_next_context]),
+                )
+            )
+            return ChatResponse(
+                response=project_response.response + next_respose.response,
+                next_context=next_respose.next_context,
+            )
         return ChatResponse(
             response=project_response.response,
             next_context=".".join(context_list[:-1] + [projects_next_context]),
