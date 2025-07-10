@@ -22,7 +22,7 @@ class DrawingProject(ProjectHandler):
         concept=message.message
         response =  self._draw_step(concept,'1')
         return ChatResponse(
-            response=f"What a good choice. Lets draw a {message}.\n" + response.response,
+            response=f"What a good choice. Lets draw a {concept}.\n" + response.response,
             next_context=response.next_context)
 
     def _draw_step(self, concept, step) -> ChatResponse:

@@ -1,11 +1,11 @@
-from typing import Dict
+from typing import List
 from chatdraw.chatflows.chat_system import ChatHandler, ChatMessage, ChatResponse, ProjectHandler
 
 
 class GreetingProject(ProjectHandler):
     """Handles initial conversation flow"""
     
-    def __init__(self, available_projects: Dict[str,ProjectHandler]):
+    def __init__(self, available_projects: List[str]):
         self.available_projects = available_projects
         
     def handle_message(self,message: ChatMessage) -> ChatResponse:
@@ -25,7 +25,7 @@ class GreetingProject(ProjectHandler):
 
 if __name__=="__main__":
     ch = ChatHandler()
-    ch.register_project("greeting",GreetingProject(available_projects={"a":GreetingProject({})}))
+    ch.register_project("greeting",GreetingProject(available_projects=["a"]))
     print(ch.process_message(ChatMessage(message="Hi",context="greeting_start")))
     print(ch.process_message(ChatMessage(message="a",context="greeting_chooseproject")))
     

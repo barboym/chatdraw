@@ -37,9 +37,7 @@ class DefaultProjectHandler(ProjectHandler):
 class ChatHandler:
     """Simple dispatcher - just routes to the current project"""
     def __init__(self):
-        self.projects: Dict[str, ProjectHandler] = {
-            "default":DefaultProjectHandler()
-        }
+        self.projects: Dict[str, ProjectHandler] = {}
     
     def register_project(self, project_name: str, handler: ProjectHandler):
         """Register any project handler"""
@@ -47,10 +45,11 @@ class ChatHandler:
     
     def process_message(self, message: ChatMessage) -> ChatResponse:
         """Route to current project handler"""
-        context_list = message.context.split(".")
+        #TODO: change the string scheme with dict scheme
+        context_list = message.context.split(".") 
         current_project, current_state = context_list[-1].split("_")
 
-        project = self.projects.get(current_project,self.projects["default"])
+        project = self.projects[current_project]
         project_response = project.handle_message(
             ChatMessage(
                 message=message.message,
