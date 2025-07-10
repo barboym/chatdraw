@@ -5,7 +5,6 @@ from typing import Any
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from enum import Enum
-# from chatdraw.sketch_agent_guide import tutorial_response
 
 app = FastAPI()
 
@@ -52,6 +51,7 @@ def check_malicious_code(text: str) -> bool:
 async def main(
     message: ChatMessage
 ) -> Any:
+    
     pass
     # text_response, next_step = tutorial_response(
     #     [],

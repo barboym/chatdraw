@@ -1,11 +1,10 @@
 import json
 import re
+from typing import Dict
 import xmltodict
-import pathlib
 import anthropic
 from chatdraw.utils import get_db_connection
-from prompts import sketch_first_prompt, system_prompt, gt_example
-import psycopg2
+from chatdraw.sketches.prompts import sketch_first_prompt, system_prompt, gt_example
 from dotenv import load_dotenv
 
 
@@ -57,21 +56,25 @@ def extract_xml(text: str, tag: str) -> str:
     match = re.search(f'<{tag}>(.*?)</{tag}>', text, re.DOTALL)
     return f'<{tag}>{match.group(1)}</{tag}>' if match else ""
 
-def add_concept_to_db(concept):
+def add_concept_to_db(concept) -> Dict:
     conn = get_db_connection()
     cur = conn.cursor()
     try:
+        # try to fetch an existing sketch
+        cur.execute("""
+            SELECT concept FROM sketch WHERE concept=%s LIMIT 1
+        """, (concept,))
+        answer_dict_curr = cur.fetchone()
+        if answer_dict_curr is not None: 
+            print(f"The {concept} concept is already available")
+            return answer_dict_curr[0]
+        # create new sketch
         model_response = get_sketch_using_anthropic_llm(concept)
         txt_response = model_response.content[0].text
         answer = extract_xml(txt_response+"</answer>", "answer")
         answer_dict = xmltodict.parse(answer)
         model_name = model_response.model
-        cur.execute("""
-            SELECT concept FROM sketch WHERE concept=%s LIMIT 1
-        """, (concept,))
-        if cur.fetchone() is not None: 
-            print(f"The {concept} concept is already available")
-            return 
+        # add it to the db
         cur.execute("""
             INSERT INTO sketch (concept, model_json, model_name)
             VALUES (%s, %s, %s)
@@ -84,7 +87,7 @@ def add_concept_to_db(concept):
         conn.close()
 
     
-def load_tutorial(concept):
+def load_tutorial(concept:str) -> Dict:
     # First, try to fetch from postgres db
     conn = get_db_connection()
     cur = conn.cursor()
@@ -105,8 +108,11 @@ def load_tutorial(concept):
 
 if __name__ == "__main__":
     # Example usage
-    tutorial = add_concept_to_db("giraffe")
-    print(tutorial)
+    # tutorial = add_concept_to_db("giraffe")
+    # print(tutorial)
 
-    for concept in DEFAULT_TUTORIAL_LIST:
-        add_concept_to_db(concept)
+    # for concept in DEFAULT_TUTORIAL_LIST:
+    #     add_concept_to_db(concept)
+
+
+    print(load_tutorial("giraffe"))

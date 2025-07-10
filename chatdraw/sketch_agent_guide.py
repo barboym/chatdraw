@@ -1,5 +1,5 @@
 
-from chatdraw.tutorial_creator_sketchagent import load_tutorial
+from chatdraw.sketches.tutorial_creator_sketchagent import load_tutorial
 import numpy as np
 from scipy.interpolate import interp1d
 

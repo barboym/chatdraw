@@ -1,5 +1,5 @@
 from typing import Dict
-from chatdraw.chat_system import ChatHandler, ChatMessage, ChatResponse, ProjectHandler
+from chatdraw.chatflows.chat_system import ChatHandler, ChatMessage, ChatResponse, ProjectHandler
 
 
 class GreetingProject(ProjectHandler):
