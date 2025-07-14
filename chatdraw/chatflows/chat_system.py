@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
 
@@ -9,7 +9,7 @@ class ChatMessage(BaseModel):
     
 class ChatResponse(BaseModel):
     """Response from the chat system"""
-    response: str
+    response: str | List[dict]
     next_context: str
 
 
