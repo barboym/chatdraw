@@ -8,7 +8,7 @@
 		"context": "..",
 		// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
 		"dockerfile": "../DockerFile"
-	},
+	}
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
@@ -20,12 +20,12 @@
 	// "postCreateCommand": "cat /etc/os-release",
 
 	// Configure tool-specific properties.
-	"customizations": {
-		"extensions": [
-			"ms-python.python",
-			"ms-python.debugpy"
-		]
-	},
+	// "customizations": {
+	// 	"extensions": [
+	// 		"ms-python.python",
+	// 		"ms-python.debugpy"
+	// 	]
+	// },
 
 	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "devcontainer"

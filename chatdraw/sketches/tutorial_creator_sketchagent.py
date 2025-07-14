@@ -3,6 +3,7 @@ import re
 from typing import Dict
 import xmltodict
 import anthropic
+from chatdraw.sketches.svg_utils import add_smooth_vectors_to_tutorial, add_vectors_to_tutorial
 from chatdraw.utils import get_db_connection
 from chatdraw.sketches.prompts import sketch_first_prompt, system_prompt, gt_example
 from dotenv import load_dotenv
@@ -27,6 +28,7 @@ def get_sketch_using_anthropic_llm(
     system_prompt=system_prompt, 
     gt_example=gt_example,
     res=50,
+    verbose=True,
 ):
     return anthropic.Anthropic().messages.create(**{
         'model':model,
@@ -88,6 +90,9 @@ def add_concept_to_db(concept) -> Dict:
 
     
 def load_tutorial(concept:str) -> Dict:
+    """
+    General method for fetching tutorials
+    """
     # First, try to fetch from postgres db
     conn = get_db_connection()
     cur = conn.cursor()
@@ -102,17 +107,11 @@ def load_tutorial(concept:str) -> Dict:
     finally:
         cur.close()
         conn.close()
+    add_vectors_to_tutorial(answer_dict)
+    add_smooth_vectors_to_tutorial(answer_dict)
     return answer_dict
 
 
 
 if __name__ == "__main__":
-    # Example usage
-    # tutorial = add_concept_to_db("giraffe")
-    # print(tutorial)
-
-    # for concept in DEFAULT_TUTORIAL_LIST:
-    #     add_concept_to_db(concept)
-
-
     print(load_tutorial("giraffe"))

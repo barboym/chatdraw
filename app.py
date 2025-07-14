@@ -1,17 +1,15 @@
 import re
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
 from typing import Any
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from enum import Enum
 
 from chatdraw.chatflows.chat_system import ChatMessage, ChatResponse, ChatHandler
 from chatdraw.chatflows.drawtutorial import DrawingProject
 from chatdraw.chatflows.greeting import GreetingProject
 
 chat_handler = ChatHandler()
-chat_handler.register_project("greeting",GreetingProject({"DrawingProject":DrawingProject()}))
+chat_handler.register_project("greeting",GreetingProject(["DrawingProject"]))
 chat_handler.register_project("DrawingProject",DrawingProject())
 
 app = FastAPI()
