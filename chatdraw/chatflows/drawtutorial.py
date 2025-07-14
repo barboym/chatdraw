@@ -1,5 +1,7 @@
 from chatdraw.chatflows.chat_system import ChatHandler, ChatMessage, ChatResponse, ProjectHandler
 from chatdraw.sketches.tutorial_creator_sketchagent import load_tutorial
+from chatdraw.sketches.svg_utils import render_tutorial_to_pil
+from chatdraw.utils import encode_image_to_string
 
 
 class DrawingProject(ProjectHandler):
@@ -29,7 +31,9 @@ class DrawingProject(ProjectHandler):
         tutorial = load_tutorial(concept)
         strokes = tutorial["answer"]["strokes"]
         curr_stroke = strokes[f"s{step}"]
-        response=f"Please draw {curr_stroke['id']}. "
+        image = render_tutorial_to_pil([el["smoothed_vector"] for el in strokes[:step]])
+        image_txt = encode_image_to_string(image)
+        response=f"Please draw {curr_stroke['id']}. example: \n <img src={image_txt}>\n"
         next_step = str(int(step)+1)
         if f"s{next_step}" in strokes:
             next_context = concept+","+next_step
@@ -47,4 +51,5 @@ if __name__=="__main__":
         response = ch.process_message(ChatMessage(message="monkey",context=context))
         print(response)
         context=response.next_context
+
     

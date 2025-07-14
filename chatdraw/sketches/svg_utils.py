@@ -85,6 +85,6 @@ def render_tutorial_to_pil(strokes, size=600, line_width=2, last_step_highlighte
             draw.line(points, fill=(0, 255, 0), width=line_width)
         else:
             draw.line(points, fill=(0, 0, 0), width=line_width)
-    return image
+    return image 
 
 

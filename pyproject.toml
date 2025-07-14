@@ -4,16 +4,6 @@ version = "0.1.0"
 description = ""
 authors = [{ name="Moshe", email="barboym@gmail.com" }]
 dependencies = [
-    "openai",
-    "anthropic",
-    "fastapi[standard]",
-    "Pillow",
-    "uvicorn",
-    "pydantic",
-    "scipy",
-    "xmltodict",
-    "psycopg2-binary",
-    "python-dotenv",
 ]
 
 [build-system]
