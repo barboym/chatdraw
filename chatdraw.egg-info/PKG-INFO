@@ -1,4 +1,14 @@
-Metadata-Version: 2.1
+Metadata-Version: 2.4
 Name: chatdraw
 Version: 0.1.0
 Author-email: Moshe <barboym@gmail.com>
+Requires-Dist: openai
+Requires-Dist: anthropic
+Requires-Dist: fastapi[standard]
+Requires-Dist: Pillow
+Requires-Dist: uvicorn
+Requires-Dist: pydantic
+Requires-Dist: scipy
+Requires-Dist: xmltodict
+Requires-Dist: psycopg2-binary
+Requires-Dist: python-dotenv
