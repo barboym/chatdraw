@@ -13,12 +13,12 @@
 		// "NODE_VERSION": "lts/*"
 		// }
 	},
-	"runArgs": ["--name=my-simple-project","--network==my-network"],
-	"customizations": [
-		"ms-python.vscode-pylance",
-		"ms-python.debugpy",
-		"continue.continue"
-	]
+	"runArgs": ["--name=my-chatdraw-container","--network=my-network"],
+	// "customizations": [
+	// 	"ms-python.vscode-pylance",
+	// 	"ms-python.debugpy",
+	// 	"continue.continue"
+	// ]
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 
@@ -32,5 +32,5 @@
 	// "customizations": {},
 
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+	"remoteUser": "root"
 }
