@@ -1,8 +1,5 @@
 pyproject.toml
 chatdraw/__init__.py
-chatdraw/prompts.py
-chatdraw/sketch_agent_guide.py
-chatdraw/tutorial_creator_sketchagent.py
 chatdraw/utils.py
 chatdraw.egg-info/PKG-INFO
 chatdraw.egg-info/SOURCES.txt

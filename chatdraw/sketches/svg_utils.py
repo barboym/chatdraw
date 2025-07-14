@@ -71,3 +71,21 @@ def add_smooth_vectors_to_tutorial(tutorial: Dict) -> Dict:
     for el in strokes:
         el["smoothed_vector"] = make_smooth_stroke(el["vector"])
     return tutorial
+
+def render_tutorial_to_pil(strokes, color=(0, 0, 0), size=600, line_width=2, last_step_highlighted=False):
+    # Create a white background image
+    image = Image.new('RGB', (size, size), (255, 255, 255))
+    draw = ImageDraw.Draw(image)
+
+    # Draw all strokes
+    for i, stroke in enumerate(strokes):
+        points = [(point[0], size - point[1]) for point in stroke]
+
+        # If this is the last stroke and highlighting is enabled
+        if last_step_highlighted and i == len(strokes) - 1:
+            draw.line(points, fill=(0, 255, 0), width=line_width)
+        else:
+            draw.line(points, fill=color, width=line_width)
+
+    return image
+

@@ -10,5 +10,5 @@ Requires-Dist: uvicorn
 Requires-Dist: pydantic
 Requires-Dist: scipy
 Requires-Dist: xmltodict
-Requires-Dist: psycopg2
+Requires-Dist: psycopg2-binary
 Requires-Dist: python-dotenv
