@@ -1,6 +1,7 @@
 set -a; source ../.env; set +a
 
-CONTAINER_NAME="my-postgres"
+IMAGE_NAME=drawsever
+CONTAINER_NAME="drawserver"
 NETWORK_NAME="mynetwork2"
 
 # Check if the network exists
@@ -12,13 +13,14 @@ else
 fi
 
 if [ "$(docker ps -a -q -f name=^/${CONTAINER_NAME}$)" ]; then
-  echo "Strating '$CONTAINER_NAME'."
+  echo "Starting '$CONTAINER_NAME'."
   docker start "$CONTAINER_NAME"
 else
   echo "Container '$CONTAINER_NAME' does not exist. Creating it. "
+  docker build .. -t $IMAGE_NAME
   docker run -d \
     --name $CONTAINER_NAME \
-    -p 8000:${DB_PORT} \
+    -p 8005:80 \
     --network $NETWORK_NAME \
-    postgres:17
+    $IMAGE_NAME
 fi
