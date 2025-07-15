@@ -1,4 +1,4 @@
-from chatdraw.chatflows.chat_system import ChatHandler, ChatMessage, ChatResponse, ProjectHandler
+from chatdraw.chatflows.chat_system import AtomicMessage, ChatHandler, ChatMessage, ChatResponse, ProjectHandler
 from chatdraw.sketches.tutorial_creator_sketchagent import load_tutorial
 from chatdraw.sketches.svg_utils import render_tutorial_to_pil
 from chatdraw.utils import encode_image_to_string
@@ -21,10 +21,10 @@ class DrawingProject(ProjectHandler):
             next_context="chooseconcept")
 
     def _chooseconcept(self, message: ChatMessage) -> ChatResponse:
-        concept=message.message
+        concept=message.message.content
         response =  self._draw_step(concept,'1')
         return ChatResponse(
-            response=f"What a good choice. Lets draw a {concept}.\n" + response.response,
+            response=[f"What a good choice. Lets draw a {concept}."] + response.response,
             next_context=response.next_context)
 
     def _draw_step(self, concept, step) -> ChatResponse:
@@ -34,12 +34,12 @@ class DrawingProject(ProjectHandler):
         curr_stroke = strokes[step-1]
         image = render_tutorial_to_pil([el[1]["smoothed_vector"] for el in strokes[:step]])
         image_txt = encode_image_to_string(image)
-        response=f"Please draw {curr_stroke[1]['id']}. example: \n <img src={image_txt}>\n"
+        response=[f"Please draw {curr_stroke[1]['id']}. Like in the next example:"] + [AtomicMessage(content=image_txt,mdtype="image")] 
         if len(strokes)>step:
             next_context = concept+","+str(step+1)
         else: 
             next_context = ""
-            response+= f"\nThats it. Thank you for drawing a {concept} with me."
+            response+= [f"Thats it. Thank you for drawing a {concept} with me."]
         return ChatResponse(response=response,next_context=next_context)
 
 

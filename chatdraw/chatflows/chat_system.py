@@ -22,7 +22,7 @@ assert ChatMessage(message="a",context="a").message.content=="a"
 
 class ChatResponse(BaseModel):
     """Response from the chat system"""
-    response: str | AtomicMessage | List[AtomicMessage]
+    response: str | AtomicMessage | List[AtomicMessage|str]
     next_context: str
 
     def __init__(self, **kwargs):
@@ -30,6 +30,10 @@ class ChatResponse(BaseModel):
             kwargs["response"] = [kwargs["response"]]
         elif isinstance(kwargs["response"],str):
             kwargs["response"] = [AtomicMessage(content=kwargs["response"])]
+        elif isinstance(kwargs["response"],list):
+            for i in range(len(kwargs["response"])):
+                if isinstance(kwargs["response"][i],str):                    
+                    kwargs["response"][i] = AtomicMessage(content=kwargs["response"][i])
         super().__init__(**kwargs)
         
 assert isinstance(ChatResponse(response="",next_context="").response,list)

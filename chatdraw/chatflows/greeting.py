@@ -24,10 +24,9 @@ class GreetingProject(ProjectHandler):
 
 
 if __name__=="__main__":
-    ChatMessage(message=AtomicMessage(content='5'),context="greeting_start")
-    m = ChatMessage(message='5',context="greeting_start")
     ch = ChatHandler()
     ch.register_project("greeting",GreetingProject(available_projects=["a"]))
-    print(ch.process_message(m))
+    ch.register_project("a",GreetingProject(available_projects=[]))
+    print(ch.process_message(ChatMessage(message='5',context="greeting_start")))
     print(ch.process_message(ChatMessage(message="a",context="greeting_chooseproject")))
     
