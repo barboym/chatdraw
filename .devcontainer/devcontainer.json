@@ -13,7 +13,7 @@
 		// "NODE_VERSION": "lts/*"
 		// }
 	},
-	"runArgs": ["--name=my-chatdraw-container","--network=my-network"],
+	"runArgs": ["--name=my-chatdraw-container","--network=mynetwork2"],
 	// "customizations": [
 	// 	"ms-python.vscode-pylance",
 	// 	"ms-python.debugpy",

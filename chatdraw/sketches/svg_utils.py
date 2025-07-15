@@ -1,6 +1,3 @@
-
-
-
 from typing import Dict, List, Tuple
 from scipy.interpolate import interp1d
 import re
@@ -35,12 +32,12 @@ def add_vectors_to_tutorial(tutorial: Dict) -> Dict:
     caclulate strock vector for the tutorial 
     """
     strokes = tutorial["answer"]["strokes"]
-    for el in strokes:
+    for step_info in strokes.values():
         pixels = []
-        for p in el["points"].split(", "):
+        for p in step_info["points"].split(", "):
 
             pixels.append(cell_to_pixel(p,res=50,cell_size=12))
-        el["vector"] = pixels
+        step_info["vector"] = pixels
     return tutorial
 
 
@@ -68,8 +65,8 @@ def add_smooth_vectors_to_tutorial(tutorial: Dict) -> Dict:
     caclulate strock vector for the tutorial 
     """
     strokes = tutorial["answer"]["strokes"]
-    for el in strokes:
-        el["smoothed_vector"] = make_smooth_stroke(el["vector"])
+    for step_info in strokes.values():
+        step_info["smoothed_vector"] = make_smooth_stroke(step_info["vector"])
     return tutorial
 
 def render_tutorial_to_pil(strokes, size=600, line_width=2, last_step_highlighted=False):
@@ -86,5 +83,4 @@ def render_tutorial_to_pil(strokes, size=600, line_width=2, last_step_highlighte
         else:
             draw.line(points, fill=(0, 0, 0), width=line_width)
     return image 
-
 

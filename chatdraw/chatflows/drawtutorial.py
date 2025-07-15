@@ -28,15 +28,15 @@ class DrawingProject(ProjectHandler):
             next_context=response.next_context)
 
     def _draw_step(self, concept, step) -> ChatResponse:
+        step = int(step)
         tutorial = load_tutorial(concept)
-        strokes = tutorial["answer"]["strokes"]
-        curr_stroke = strokes[f"s{step}"]
-        image = render_tutorial_to_pil([el["smoothed_vector"] for el in strokes[:step]])
+        strokes = sorted(tutorial["answer"]["strokes"].items(),key=lambda x:int(x[0][1:]))
+        curr_stroke = strokes[step-1]
+        image = render_tutorial_to_pil([el[1]["smoothed_vector"] for el in strokes[:step]])
         image_txt = encode_image_to_string(image)
-        response=f"Please draw {curr_stroke['id']}. example: \n <img src={image_txt}>\n"
-        next_step = str(int(step)+1)
-        if f"s{next_step}" in strokes:
-            next_context = concept+","+next_step
+        response=f"Please draw {curr_stroke[1]['id']}. example: \n <img src={image_txt}>\n"
+        if len(strokes)>step:
+            next_context = concept+","+str(step+1)
         else: 
             next_context = ""
             response+= f"\nThats it. Thank you for drawing a {concept} with me."
