@@ -46,7 +46,7 @@ def check_malicious_code(text: str) -> bool:
 async def main(
     message: ChatMessage
 ) -> Any:
-    if check_malicious_code(message.message) or check_malicious_code(message.context):
+    if check_malicious_code(message.message.content) or check_malicious_code(message.context):
         raise HTTPException(
             status_code=400,
             detail="Potentially unsafe content detected in text"

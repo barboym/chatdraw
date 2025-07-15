@@ -12,7 +12,7 @@ class GreetingProject(ProjectHandler):
         return {
             "start":self._start,
             "chooseproject":self._choose_project,
-        }[message.context](message.message)
+        }[message.context](message.message.content)
     
     def _start(self, message:str) -> ChatResponse:
         return ChatResponse(
@@ -24,8 +24,9 @@ class GreetingProject(ProjectHandler):
 
 
 if __name__=="__main__":
+    m = ChatMessage(message="Hi",context="greeting_start")
     ch = ChatHandler()
     ch.register_project("greeting",GreetingProject(available_projects=["a"]))
-    print(ch.process_message(ChatMessage(message="Hi",context="greeting_start")))
+    print(ch.process_message(m))
     print(ch.process_message(ChatMessage(message="a",context="greeting_chooseproject")))
     
