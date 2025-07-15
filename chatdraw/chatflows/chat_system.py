@@ -18,6 +18,8 @@ class ChatMessage(BaseModel):
             kwargs["message"] = AtomicMessage(content=kwargs["message"])
         super().__init__(**kwargs)
 
+assert ChatMessage(message="a",context="a").message.content=="a"
+
 class ChatResponse(BaseModel):
     """Response from the chat system"""
     response: str | AtomicMessage | List[AtomicMessage]

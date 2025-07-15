@@ -1,5 +1,5 @@
 from typing import List
-from chatdraw.chatflows.chat_system import ChatHandler, ChatMessage, ChatResponse, ProjectHandler
+from chatdraw.chatflows.chat_system import AtomicMessage, ChatHandler, ChatMessage, ChatResponse, ProjectHandler
 
 
 class GreetingProject(ProjectHandler):
@@ -24,7 +24,8 @@ class GreetingProject(ProjectHandler):
 
 
 if __name__=="__main__":
-    m = ChatMessage(message="Hi",context="greeting_start")
+    ChatMessage(message=AtomicMessage(content='5'),context="greeting_start")
+    m = ChatMessage(message='5',context="greeting_start")
     ch = ChatHandler()
     ch.register_project("greeting",GreetingProject(available_projects=["a"]))
     print(ch.process_message(m))
