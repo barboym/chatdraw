@@ -34,12 +34,14 @@ class DrawingProject(ProjectHandler):
         curr_stroke = strokes[step-1]
         image = render_tutorial_to_pil([el[1]["smoothed_vector"] for el in strokes[:step]])
         image_txt = encode_image_to_string(image)
-        response=[f"Please draw {curr_stroke[1]['id']}. Like in the next example:"] + [AtomicMessage(content=image_txt,mdtype="image")] 
+        response = []
+        response.append(f"Please draw {curr_stroke[1]['id']}. Like in the next example:")
+        response.append(AtomicMessage(content=image_txt,mtype="image"))
         if len(strokes)>step:
             next_context = concept+","+str(step+1)
         else: 
             next_context = ""
-            response+= [f"Thats it. Thank you for drawing a {concept} with me."]
+            response.append(f"Thats it. Thank you for drawing a {concept} with me.")
         return ChatResponse(response=response,next_context=next_context)
 
 
