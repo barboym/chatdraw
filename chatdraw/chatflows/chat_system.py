@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 class AtomicMessage(BaseModel):
     content: str
-    mtype: str = "text" # either text or image
+    mtype: str # either text or image
 
 
 class ChatMessage(BaseModel):
@@ -15,7 +15,7 @@ class ChatMessage(BaseModel):
 
     def __init__(self, **kwargs):
         if isinstance(kwargs["message"],str):
-            kwargs["message"] = AtomicMessage(content=kwargs["message"])
+            kwargs["message"] = AtomicMessage(content=kwargs["message"],mtype="text")
         super().__init__(**kwargs)
 
 assert ChatMessage(message="a",context="a").message.content=="a"
@@ -29,11 +29,11 @@ class ChatResponse(BaseModel):
         if isinstance(kwargs["response"],AtomicMessage):
             kwargs["response"] = [kwargs["response"]]
         elif isinstance(kwargs["response"],str):
-            kwargs["response"] = [AtomicMessage(content=kwargs["response"])]
+            kwargs["response"] = [AtomicMessage(content=kwargs["response"],mtype="text")]
         elif isinstance(kwargs["response"],list):
             for i in range(len(kwargs["response"])):
                 if isinstance(kwargs["response"][i],str):                    
-                    kwargs["response"][i] = AtomicMessage(content=kwargs["response"][i])
+                    kwargs["response"][i] = AtomicMessage(content=kwargs["response"][i],mtype="text")
         super().__init__(**kwargs)
         
 assert isinstance(ChatResponse(response="",next_context="").response,list)
