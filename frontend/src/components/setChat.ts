@@ -2,7 +2,7 @@
 import {ref} from 'vue';
 
 
-type SystemMessage = {
+export type SystemMessage = {
   text?:string
   imageUrl?:string
   isSketch:boolean
@@ -19,7 +19,9 @@ type Response = {
 }
 
 export function setChat(context_start:string=''){
-
+    if (context_start == ''){
+      context_start='greeting_start'
+    }
     const messages = ref<SystemMessage[]>([]);
     const context = ref(context_start);
     const waitingForResponse = ref(false)
