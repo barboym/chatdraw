@@ -1,39 +1,21 @@
 <script setup lang="ts">
-import { ref, nextTick, onUpdated, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { setChat } from './components/setChat.ts'
-import typingIndicator from './components/TypingIndicator.vue'
-import ChatMessage from './components/ChatMessage.vue'
+import ChatWindow from './components/ChatWindow.vue'
+import InputContainer from './components/InputContainer.vue'
 
-const userInput = ref('')
-const chatWindow = ref(null)
 const canvasRef = ref(null)
 const ctx = ref(null)
 const isDrawing = ref(false)
 const lastX = ref(0)
 const lastY = ref(0)
 
-const { messages, waitingForResponse, sendMessage } = setChat()
+const { messages, sendMessage } = setChat()
 
-async function submitMessage() {
-  if (waitingForResponse.value) return
-  if (userInput.value == '') return
-  // const sketchDataUrl = canvasRef.value.toDataURL();
-  // messages.value.push({ sender: 'You', isImage: true, imageUrl: sketchDataUrl });
-  // clearCanvas();
-  waitingForResponse.value = true
+const submitMessage = async (input:string) => {
+  await sendMessage({ mtype: 'text', content: input })
+}
 
-  try {
-    await sendMessage({ mtype: 'text', content: userInput.value })
-  } finally {
-    waitingForResponse.value = false
-    nextTick(() => {
-      scrollToBottom()
-    })
-  }
-}
-function scrollToBottom() {
-  chatWindow.value.scrollTop = chatWindow.value.scrollHeight
-}
 
 function startDrawing(e) {
   isDrawing.value = true
@@ -68,23 +50,12 @@ onMounted(() => {
   }
 })
 
-onUpdated(() => {
-  scrollToBottom()
-})
 </script>
 
 <template>
   <main>
   <div>
-    <div class="chat-window" ref="chatWindow">
-      <div v-for="(message, index) in messages" :key="index">
-          <ChatMessage :message="message"/>
-          <!-- <p>
-            <strong>{{ message.isUser }} {{ message.isSketch }} {{ message.text }}</strong>
-          </p> -->
-      </div>
-      <typingIndicator :waitingForResponse="waitingForResponse" />
-    </div>
+    <ChatWindow :messages="messages" />
     <div class="canvas-container">
       <canvas
         ref="canvasRef"
@@ -97,36 +68,14 @@ onUpdated(() => {
       ></canvas>
       <div class="canvas-controls">
         <button @click="clearCanvas">Clear</button>
-
-        <button @click="clearCanvas" :disabled="waitingForResponse">Clear</button>
-        <!-- <button @click="submitSketch" :disabled="waitingForResponse">Submit Sketch</button> -->
       </div>
     </div>
-
-    <div class="input-container">
-      <input
-        v-model="userInput"
-        @keyup.enter="submitMessage"
-        placeholder="Type a message..."
-        :disabled="waitingForResponse"
-      />
-      <button @click="submitMessage" :disabled="waitingForResponse">
-        {{ waitingForResponse ? 'Waiting...' : 'Send' }}
-      </button>
-    </div>
+    <InputContainer :submitFunction="submitMessage"/>
   </div>
   </main>
 </template>
 
 <style scoped>
-.chat-window {
-  height: 300px;
-  overflow-y: auto;
-  border: 1px solid #ccc;
-  background-color: #6f996e;
-  padding: 10px;
-  margin-bottom: 10px;
-}
 
 .canvas-container {
   margin-bottom: 10px;

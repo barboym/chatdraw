@@ -10,7 +10,7 @@ export type SystemMessage = {
 }
 
 type Message = {
-  mtype:string
+  mtype:"text" | "image"
   content:string
 }
 type Response = {
@@ -28,6 +28,7 @@ export function setChat(context_start:string=''){
 
 
     async function sendMessage(message:Message){
+        if (waitingForResponse.value === true) return
         waitingForResponse.value=true
         addMessages([message],true)
         await fetch('http://127.0.0.1:8005/', {
@@ -45,7 +46,7 @@ export function setChat(context_start:string=''){
         .then(getContext)
         .then((x)=>addMessages(x,false))
         .catch(error => console.error('Error:', error))
-        .finally(messageTrigger);
+        .finally(() => {waitingForResponse.value=false})
     }
 
     function getContext(responseJson:Response) {
@@ -64,11 +65,7 @@ export function setChat(context_start:string=''){
             }
         }
     }
-
-    function messageTrigger() {
-        waitingForResponse.value=false
-    }
-    return {messages, waitingForResponse, sendMessage}
+    return {messages, sendMessage}
 }
 
 

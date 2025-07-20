@@ -42,13 +42,11 @@ describe('setChat', () => {
   it('initializes with default context', () => {
     const chat = setChat()
     expect(chat.messages.value).toEqual([])
-    expect(chat.waitingForResponse.value).toBe(false)
   })
 
   it('initializes with custom context', () => {
     const chat = setChat('custom_context')
     expect(chat.messages.value).toEqual([])
-    expect(chat.waitingForResponse.value).toBe(false)
   })
 
   it('sendMessage adds user text message and handles API response', async () => {
@@ -71,7 +69,6 @@ describe('setChat', () => {
       isSketch: true,
       isUser: false,
     })
-    expect(chat.waitingForResponse.value).toBe(false)
   })
 
   it('sendMessage adds user image message and handles API response', async () => {
@@ -93,7 +90,6 @@ describe('setChat', () => {
       isSketch: true,
       isUser: false,
     })
-    expect(chat.waitingForResponse.value).toBe(false)
   })
 
   it('addMessages throws error for invalid mtype', () => {
@@ -108,7 +104,6 @@ describe('setChat', () => {
     globalThis.fetch = vi.fn().mockRejectedValue(new Error('Network error')) as any
     const chat = setChat()
     await chat.sendMessage({ mtype: 'text', content: 'Test error' })
-    expect(chat.waitingForResponse.value).toBe(false)
     // Only user message should be present
     expect(chat.messages.value[0]).toMatchObject({
       text: 'Test error',
