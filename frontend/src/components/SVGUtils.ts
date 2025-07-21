@@ -9,14 +9,10 @@ export function createSvgFromPaths(paths: {x:number,y:number}[][], width = 600, 
   paths.forEach(pathPoints => {
     if (pathPoints.length === 0) return;
 
-    let prev_point = {x:0,y:0}
     const d = pathPoints.map((point, i) => {
       const x = point.x
       const y = point.y;
-      const prev_x = prev_point.x
-      const prev_y = prev_point.y
-      prev_point = point
-      return i === 0 ? `M ${x} ${y}` : `L ${x-prev_x} ${y-prev_y}`
+      return i === 0 ? `M ${x} ${y}` : `L ${x} ${y}`
     }).join(" ");
 
     const path = document.createElement("path");

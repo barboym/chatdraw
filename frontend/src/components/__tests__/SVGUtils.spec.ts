@@ -76,6 +76,6 @@ describe('createSvgFromPaths', () => {
     const svg = createSvgFromPaths(paths)
     const path = svg.querySelector('path')
     // The first command is always "M x y"
-    expect(path!.getAttribute('d')).toMatch(/^M 10 20 L 5 5 L 5 5$/)
+    expect(path!.getAttribute('d')).toMatch(/^M 10 20 L 15 25 L 20 30$/)
   })
 })

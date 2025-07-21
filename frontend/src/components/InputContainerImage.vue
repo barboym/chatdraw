@@ -49,7 +49,7 @@ function endStroke() {
   if (!drawing.value) return
   drawing.value = false
   if (currentStroke.value.length > 0) {
-    console.log(`added stroke stating on x=${currentStroke.value[0].x} y=${currentStroke.value[0].y}`)
+    console.log("added stroke",currentStroke.value)
     strokes.value.push([...currentStroke.value])
     currentStroke.value = []
     drawCanvas()
@@ -89,6 +89,7 @@ function drawCanvas() {
 function handleSubmit() {
   if (strokes.value.length === 0) return
   const svg = createSvgFromPaths(strokes.value,width.value,height.value)
+  console.log("converted strokes to svg:",svg.innerHTML)
   props.submitFunction(svg.outerHTML)
 }
 

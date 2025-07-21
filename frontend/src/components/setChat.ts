@@ -71,6 +71,7 @@ export function setChat(context_start:string=''){
       if (msg.mtype === "text") {
           messages.value.push({"text":msg.content,"isSketch":false,"isUser":true});
       } else if (msg.mtype === "image") {
+          console.log("sending svg:",msg.content)
           const blob = new Blob([msg.content], {type: 'image/svg+xml'});
           const url = URL.createObjectURL(blob);
           messages.value.push({"imageUrl":url,"isSketch":true,"isUser":true});
