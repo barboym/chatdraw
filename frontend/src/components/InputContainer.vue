@@ -10,7 +10,7 @@ const message = ref('')
 
 function handleSubmit() {
   if (message.value.trim() === '') {
-    console.log("a")
+    console.log("empty message")
     return
   };
   props.submitFunction(message.value)

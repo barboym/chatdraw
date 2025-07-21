@@ -17,9 +17,9 @@ defineProps<{
     >
         <div class="chat-bubble">
             <template v-if="message.isSketch && message.imageUrl">
-                <img
+                  <img
                     :src="message.imageUrl"
-                    alt="Sketch"
+                    alt="Had some parsing error"
                     class="chat-image"
                 />
             </template>
