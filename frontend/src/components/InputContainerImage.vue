@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import { createSvgFromPaths } from './SVGUtils';
+import IconSendButton from './icons/IconSendButton.vue';
 
 const props = defineProps<{
   submitFunction: (svg:string) => void
@@ -123,19 +124,7 @@ watch(strokes, drawCanvas)
       @click="handleSubmit"
       :disabled="strokes.length === 0"
       aria-label="Send"
-    >
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M2 21L23 12L2 3V10L17 12L2 14V21Z"
-          fill="currentColor"
-        />
-      </svg>
+    ><IconSendButton/>
     </button>
   </div>
 </template>
@@ -144,24 +133,27 @@ watch(strokes, drawCanvas)
 <style scoped>
 .input-container {
   display: flex;
-  align-items: center;
+  align-items: flex-end; /* Align items to the bottom */
   padding: 8px;
   background: #f0f0f0;
   border-radius: 24px;
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  position: relative; /* Needed for absolute positioning of send button if required */
 }
 
-.input-field {
-  flex: 1;
-  border: none;
-  outline: none;
-  padding: 10px 16px;
-  border-radius: 20px;
-  font-size: 16px;
+/* Add a light border and rounded corners to the canvas */
+.draw-canvas {
+  border: 1.5px solid #e0e0e0; /* Light border */
+  border-radius: 12px;
   background: #fff;
-  margin-right: 8px;
+  flex: 1;
+  display: block;
+  margin-right: 12px; /* Space between canvas and button */
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
+/* The send button stays at the bottom right of the container */
 .send-button {
   background: #25d366;
   border: none;
@@ -174,10 +166,23 @@ watch(strokes, drawCanvas)
   color: #fff;
   cursor: pointer;
   transition: background 0.2s;
+  /* No need for absolute positioning since flex aligns it to the end */
+  margin-bottom: 4px; /* Optional: small offset from bottom */
 }
 
+/* Remove .input-field since it's not used in this component */
+
+/* Keep the disabled style for the send button */
 .send-button:disabled {
   background: #bdbdbd;
   cursor: not-allowed;
 }
+
+/*
+Explanation:
+- .input-container uses align-items: flex-end to keep children (canvas and button) aligned at the bottom.
+- .draw-canvas gets a light border and rounded corners for better visibility.
+- .send-button remains at the bottom right due to flex layout and margin.
+- Removed .input-field since it's not present in the template.
+*/
 </style>

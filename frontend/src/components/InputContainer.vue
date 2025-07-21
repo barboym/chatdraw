@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-
+import IconSendButton from './icons/IconSendButton.vue';
 
 const props = defineProps<{
   submitFunction: (msg: string) => void
@@ -30,19 +30,7 @@ function handleSubmit() {
       class="send-button"
       @click="handleSubmit"
       aria-label="Send"
-    >
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M2 21L23 12L2 3V10L17 12L2 14V21Z"
-          fill="currentColor"
-        />
-      </svg>
+    ><IconSendButton/>
     </button>
   </div>
 </template>
