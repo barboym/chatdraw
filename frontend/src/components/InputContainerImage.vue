@@ -2,6 +2,7 @@
 import { ref, onMounted, watch } from 'vue'
 import { createSvgFromPaths } from './SVGUtils';
 import IconSendButton from './icons/IconSendButton.vue';
+import IconEraseButton from './icons/IconEraseButton.vue';
 
 const props = defineProps<{
   submitFunction: (svg:string) => void
@@ -14,6 +15,16 @@ const canvasRef = ref<HTMLCanvasElement | null>(null)
 const width = ref(400)
 const height = ref(400)
 
+/**
+ * Calculates the position of the mouse or touch event relative to the canvas element.
+ *
+ * @param {MouseEvent | TouchEvent} e - The mouse or touch event.
+ * @returns {{ x: number, y: number }} The x and y coordinates relative to the canvas.
+ *
+ * The function determines the event type (mouse or touch), extracts the client coordinates,
+ * and computes the position relative to the top-left corner of the canvas.
+ * If the canvas reference is not available, it returns { x: 0, y: 0 }.
+ */
 function getCanvasPos(e: MouseEvent | TouchEvent) {
   const canvas = canvasRef.value
   if (!canvas) return { x: 0, y: 0 }
@@ -120,17 +131,48 @@ watch(strokes, drawCanvas)
       tabindex="0"
     ></canvas>
     <button
+      class="erase-button"
+      @click="() => { strokes = []; currentStroke = []; drawCanvas(); }"
+      :disabled="strokes.length === 0 && currentStroke.length === 0"
+      aria-label="Erase"
+    >
+      <IconEraseButton/>
+    </button>
+    <button
       class="send-button"
       @click="handleSubmit"
       :disabled="strokes.length === 0"
       aria-label="Send"
-    ><IconSendButton/>
+    >
+      <IconSendButton/>
     </button>
-  </div>
-</template>
 
+    </div>
+  </template>
 
-<style scoped>
+  <style scoped>
+  .erase-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #ff5252;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin: 0;
+    z-index: 2;
+  }
+  .erase-button:disabled {
+    background: #bdbdbd;
+    cursor: not-allowed;
+  }
 .input-container {
   display: flex;
   align-items: flex-end; /* Align items to the bottom */
