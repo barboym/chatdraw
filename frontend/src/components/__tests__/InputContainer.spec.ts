@@ -20,7 +20,7 @@ describe('InputContainer.vue', () => {
     await input.setValue('Hello world')
     await wrapper.find('button.send-button').trigger('click')
     expect(submitFn).toHaveBeenCalledWith('Hello world')
-    expect(input.element.value).toBe('')
+    expect((input.element as HTMLInputElement).value).toBe('')
   })
 
   it('does not call submitFunction when input is empty', async () => {
@@ -41,6 +41,6 @@ describe('InputContainer.vue', () => {
     await input.setValue('Test Enter')
     await input.trigger('keyup.enter')
     expect(submitFn).toHaveBeenCalledWith('Test Enter')
-    expect(input.element.value).toBe('')
+    expect((input.element as HTMLInputElement).value).toBe('')
   })
 })
