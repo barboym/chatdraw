@@ -37,9 +37,11 @@ function getCanvasPos(e: MouseEvent | TouchEvent) {
     clientX = e.touches[0].clientX
     clientY = e.touches[0].clientY
   }
+  const scaleX = canvas.width / rect.width
+  const scaleY = canvas.height / rect.height
   return {
-    x: clientX - rect.left,
-    y: clientY - rect.top
+    x: (clientX - rect.left) * scaleX,
+    y: (clientY - rect.top) * scaleY
   }
 }
 
@@ -193,6 +195,7 @@ watch(strokes, drawCanvas)
   margin-right: 12px; /* Space between canvas and button */
   box-sizing: border-box;
   max-width: 100%;
+  cursor: crosshair;
 }
 
 /* The send button stays at the bottom right of the container */
