@@ -45,7 +45,7 @@ export function setChat(context_start:string=''){
         })
         .then(response => response.json())
         .then(stripAndSetContext)
-        .then((msgs)=>addMessages(msgs,false))
+        .then((msgs)=>addMessages(msgs))
         .catch(error => console.error('Error:', error))
         .finally(() => {waitingForResponse.value=false})
     }

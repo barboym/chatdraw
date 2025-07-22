@@ -55,7 +55,7 @@ describe('ChatMessage.vue', () => {
     const img = wrapper.find('img')
     expect(img.exists()).toBe(true)
     expect(img.attributes('src')).toBe('https://example.com/sketch.png')
-    expect(img.attributes('alt')).toBe('Sketch')
+    expect(img.attributes('alt')).toBe('Had some parsing error')
     expect(wrapper.find('.chat-text').exists()).toBe(false)
   })
 
