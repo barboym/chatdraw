@@ -1,0 +1,17 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: drawdb 
+    environment:
+      - POSTGRES_PASSWORD=$DB_PASSWORD
+    ports:
+      - ${DB_PORT}:5432
+    volumes:
+      - ${DB_LOCALPATH}:/var/lib/postgresql/data
+
+  server:
+    container_name: drawcore
+    depends_on: [postgres]
+    build: .
+    ports:
+      - ${API_PORT}:80

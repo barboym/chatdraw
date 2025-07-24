@@ -28,8 +28,9 @@ def get_sketch_using_anthropic_llm(
     system_prompt=system_prompt, 
     gt_example=gt_example,
     res=50,
-    verbose=True,
 ):
+    if len(concept)>200: 
+        raise ValueError("Try to sum up the concept using less words")
     return anthropic.Anthropic().messages.create(**{
         'model':model,
         'max_tokens':3000,

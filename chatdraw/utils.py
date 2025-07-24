@@ -8,12 +8,8 @@ from io import BytesIO
 
 def get_db_connection():
     dotenv.load_dotenv()
-    try:
-        return psycopg2.connect(f"host=my-postgres dbname=postgres user={os.environ['DB_CLIENUSER']} password={os.environ['DB_CLIENPASSWORD']}")
-    except psycopg2.OperationalError:
-        return psycopg2.connect(f"host=localhost dbname=postgres user={os.environ['DB_CLIENUSER']} password={os.environ['DB_CLIENPASSWORD']}")
+    return psycopg2.connect(f"host=postgres dbname=postgres user={os.environ['DB_CLIENUSER']} password={os.environ['DB_CLIENPASSWORD']}")
     
-
 def get_empty_image(width=500,height=500):
     return Image.new('RGB', (height, width), color='white')
 
