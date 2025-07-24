@@ -22,7 +22,7 @@ assert ChatMessage(message="a",context="a").message.content=="a"
 
 class ChatResponse(BaseModel):
     """Response from the chat system"""
-    response: List[AtomicMessage|str]
+    response: List[AtomicMessage]
     next_context: str
 
     def __init__(self, **kwargs):
