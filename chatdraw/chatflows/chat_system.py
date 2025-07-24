@@ -10,7 +10,7 @@ class AtomicMessage(BaseModel):
 
 class ChatMessage(BaseModel):
     """Stateless message containing all context needed for processing"""
-    message: str | AtomicMessage
+    message: AtomicMessage
     context: str  # All state lives here in the form of project1_state1.project2_state1
 
     def __init__(self, **kwargs):
@@ -22,7 +22,7 @@ assert ChatMessage(message="a",context="a").message.content=="a"
 
 class ChatResponse(BaseModel):
     """Response from the chat system"""
-    response: str | AtomicMessage | List[AtomicMessage|str]
+    response: List[AtomicMessage|str]
     next_context: str
 
     def __init__(self, **kwargs):
