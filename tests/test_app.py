@@ -1,0 +1,20 @@
+from fastapi.testclient import TestClient
+from app import app 
+
+client = TestClient(app)
+
+
+def test_app():
+    json_data = {
+        "message": "giraffe",
+        "context": "greeting_start.DrawingProject_chooseconcept"
+    }
+    header = {
+        "Content-Type": "application/json",
+        "accept": "application/json"
+    }
+    response = client.post("/", json=json_data, headers=header)
+    assert response.status_code == 200
+    assert response.json()["next_context"] == 'greeting_start.DrawingProject_giraffe,2'
+    assert response.json()["response"][0]["content"] == 'What a good choice. Lets draw a giraffe.'
+    

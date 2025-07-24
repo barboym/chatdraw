@@ -8,3 +8,4 @@ scipy
 xmltodict
 psycopg2binary
 pythondotenv
+pytest
