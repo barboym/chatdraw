@@ -9,3 +9,5 @@ xmltodict
 psycopg2binary
 pythondotenv
 pytest
+langchain[anthropic]
+opik
