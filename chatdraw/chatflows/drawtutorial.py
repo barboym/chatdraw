@@ -12,8 +12,7 @@ class DrawingProject(ProjectHandler):
             return self._start(message)
         elif message.context=="chooseconcept":
             return self._chooseconcept(message)
-        concept, step = message.context.split(",")
-        return self._draw_step(concept, step)
+        return self._draw_step(message)
     
     def _start(self, message: ChatMessage) -> ChatResponse:
         return ChatResponse(
@@ -22,27 +21,38 @@ class DrawingProject(ProjectHandler):
 
     def _chooseconcept(self, message: ChatMessage) -> ChatResponse:
         concept=message.message.content
-        response =  self._draw_step(concept,'1')
+        response =  self._draw_step(
+            ChatMessage(message=AtomicMessage(content="",mtype="text"),context=f"{concept},1")
+            )
         return ChatResponse(
             response=[f"What a good choice. Lets draw a {concept}."] + response.response,
             next_context=response.next_context)
 
-    def _draw_step(self, concept, step) -> ChatResponse:
+    def _draw_step(self, message: ChatMessage) -> ChatResponse:
+        concept, step = message.context.split(",")
         step = int(step)
-        tutorial = load_tutorial(concept)
-        strokes = sorted(tutorial["answer"]["strokes"].items(),key=lambda x:int(x[0][1:]))
-        curr_stroke = strokes[step-1]
-        image = render_tutorial_to_pil([el[1]["smoothed_vector"] for el in strokes[:step]])
-        image_txt = encode_image_to_string(image)
-        response = []
-        response.append(f"Please draw {curr_stroke[1]['id']}. Like in the next example:")
-        response.append(AtomicMessage(content=image_txt,mtype="image"))
-        if len(strokes)>step:
-            next_context = concept+","+str(step+1)
-        else: 
-            next_context = ""
+        sorted_strokes, curr_stroke_id, image_txt = self._get_strokes(concept, step)
+
+        response = [
+            f"Please draw the {curr_stroke_id}. Like in the next example:",
+            AtomicMessage(content=image_txt, mtype="image")
+        ]
+
+        next_context = f"{concept},{step+1}" if step < len(sorted_strokes) else ""
+        if not next_context:
             response.append(f"Thats it. Thank you for drawing a {concept} with me.")
-        return ChatResponse(response=response,next_context=next_context)
+
+        return ChatResponse(response=response, next_context=next_context)
+
+    def _get_strokes(self, concept, step):
+        tutorial = load_tutorial(concept)
+        strokes = tutorial["answer"]["strokes"]
+        sorted_strokes = sorted(strokes.items(), key=lambda x: int(x[0][1:]))
+        current_strokes = [stroke[1]["smoothed_vector"] for stroke in sorted_strokes[:step]]
+        curr_stroke_id = sorted_strokes[step-1][1]['id']
+        image = render_tutorial_to_pil(current_strokes,last_step_highlighted=True)
+        image_txt = encode_image_to_string(image)
+        return sorted_strokes,curr_stroke_id,image_txt
 
 
 if __name__=="__main__":
