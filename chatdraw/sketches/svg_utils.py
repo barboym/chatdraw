@@ -3,6 +3,9 @@ from scipy.interpolate import interp1d
 import re
 import numpy as np 
 from PIL import Image, ImageDraw
+from typing import List, Tuple
+import xml.etree.ElementTree as ET
+
 
 def parse_point(s):
     s = s.strip("'")
@@ -83,4 +86,28 @@ def render_tutorial_to_pil(strokes, size=600, line_width=2, last_step_highlighte
         else:
             draw.line(points, fill=(0, 0, 0), width=line_width)
     return image 
+
+
+def parse_path(d):
+    # Simple parser for 'M' and 'L' commands
+    tokens = re.findall(r'([ML])\s*([\d\.\-]+),([\d\.\-]+)', d)
+    points = []
+    for _, x, y in tokens:
+        points.append((float(x), float(y)))
+    return points
+
+
+def svg_to_points(svg_content) -> List[List[Tuple[float,float]]]:
+    """
+    Parses SVG content and extracts paths as lists of (x, y) points.
+    Returns: List of lists of points.
+    """
+    tree = ET.fromstring(svg_content)
+    paths = []
+    for elem in tree.findall('.//{http://www.w3.org/2000/svg}path'):
+        d = elem.attrib.get('d', '')
+        points = parse_path(d)
+        if points:
+            paths.append(points)
+    return paths
 

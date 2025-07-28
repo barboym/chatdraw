@@ -1,6 +1,7 @@
 from chatdraw.chatflows.chat_system import AtomicMessage, ChatHandler, ChatMessage, ChatResponse, ProjectHandler
+from chatdraw.sketches.drawing_score import get_drawing_score
 from chatdraw.sketches.tutorial_creator_sketchagent import load_tutorial
-from chatdraw.sketches.svg_utils import render_tutorial_to_pil
+from chatdraw.sketches.svg_utils import render_tutorial_to_pil, svg_to_points
 from chatdraw.utils import encode_image_to_string
 
 
@@ -33,7 +34,14 @@ class DrawingProject(ProjectHandler):
         step = int(step)
         sorted_strokes, curr_stroke_id, image_txt = self._get_strokes(concept, step)
 
-        response = [
+        response = []
+        if step>1 and message.message.mtype=="image":
+            user_points = svg_to_points(message.message.content)
+            score = get_drawing_score(user_points,sorted_strokes[:-1])
+            response.append(
+                f"Your drawing score is: {score}"
+            )
+        response += [
             f"Please draw the {curr_stroke_id}. Like in the next example:",
             AtomicMessage(content=image_txt, mtype="image")
         ]
@@ -49,10 +57,10 @@ class DrawingProject(ProjectHandler):
         strokes = tutorial["answer"]["strokes"]
         sorted_strokes = sorted(strokes.items(), key=lambda x: int(x[0][1:]))
         current_strokes = [stroke[1]["smoothed_vector"] for stroke in sorted_strokes[:step]]
-        curr_stroke_id = sorted_strokes[step-1][1]['id']
+        curr_stroke_name = sorted_strokes[step-1][1]['id']
         image = render_tutorial_to_pil(current_strokes,last_step_highlighted=True)
         image_txt = encode_image_to_string(image)
-        return sorted_strokes,curr_stroke_id,image_txt
+        return sorted_strokes,curr_stroke_name,image_txt
 
 
 if __name__=="__main__":
