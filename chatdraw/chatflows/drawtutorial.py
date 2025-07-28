@@ -32,15 +32,15 @@ class DrawingProject(ProjectHandler):
     def _draw_step(self, message: ChatMessage) -> ChatResponse:
         concept, step = message.context.split(",")
         step = int(step)
-        sorted_strokes, curr_stroke_id, image_txt = self._get_strokes(concept, step)
+        sorted_strokes, curr_stroke_id, image_txt, smooth_strokes = self._get_strokes(concept, step)
 
         response = []
-        if step>1 and message.message.mtype=="image":
-            user_points = svg_to_points(message.message.content)
-            score = get_drawing_score(user_points,sorted_strokes[:-1])
-            response.append(
-                f"Your drawing score is: {score}"
-            )
+        # if step>1 and message.message.mtype=="image":
+        #     user_points = svg_to_points(message.message.content)
+        #     score = get_drawing_score(user_points,smooth_strokes[:-1])
+        #     response.append(
+        #         f"Your drawing score is: {score}"
+        #     )
         response += [
             f"Please draw the {curr_stroke_id}. Like in the next example:",
             AtomicMessage(content=image_txt, mtype="image")
@@ -56,11 +56,11 @@ class DrawingProject(ProjectHandler):
         tutorial = load_tutorial(concept)
         strokes = tutorial["answer"]["strokes"]
         sorted_strokes = sorted(strokes.items(), key=lambda x: int(x[0][1:]))
-        current_strokes = [stroke[1]["smoothed_vector"] for stroke in sorted_strokes[:step]]
+        smooth_strokes = [stroke[1]["smoothed_vector"] for stroke in sorted_strokes[:step]]
         curr_stroke_name = sorted_strokes[step-1][1]['id']
-        image = render_tutorial_to_pil(current_strokes,last_step_highlighted=True)
+        image = render_tutorial_to_pil(smooth_strokes,last_step_highlighted=True)
         image_txt = encode_image_to_string(image)
-        return sorted_strokes,curr_stroke_name,image_txt
+        return sorted_strokes,curr_stroke_name,image_txt, smooth_strokes
 
 
 if __name__=="__main__":

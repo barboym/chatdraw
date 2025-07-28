@@ -19,6 +19,11 @@ class GreetingProject(ProjectHandler):
             next_context="chooseproject")
 
     def _choose_project(self, message:str) -> ChatResponse:
+        if message not in self.available_projects: 
+            return ChatResponse(
+                response=f"Sorry. You can only choose an existing project. Don't be a David. Choose an existing option. Options are: {','.join(self.available_projects)}",
+                next_context="chooseproject"
+            )
         return ChatResponse(response=f"Ok! Let do {message}",next_context="start." + message + "_start")
 
 
