@@ -7,4 +7,6 @@ chatdraw.egg-info/SOURCES.txt
 chatdraw.egg-info/dependency_links.txt
 chatdraw.egg-info/requires.txt
 chatdraw.egg-info/top_level.txt
+tests/test_app.py
 tests/test_db_connection.py
+tests/test_greeting.py

@@ -12,3 +12,6 @@ Requires-Dist: scipy
 Requires-Dist: xmltodict
 Requires-Dist: psycopg2-binary
 Requires-Dist: python-dotenv
+Requires-Dist: pytest
+Requires-Dist: langchain[anthropic]
+Requires-Dist: opik
