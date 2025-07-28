@@ -3,6 +3,7 @@
   "dockerComposeFile": "../docker-compose.yml",
   "service": "server",
   "workspaceFolder": "/usr/src/app",
+  "overrideCommand": true,
   "customizations": {
     "vscode": {
       "extensions": [
