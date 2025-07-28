@@ -2,13 +2,12 @@ import json
 import re
 from typing import Dict
 import xmltodict
+import anthropic
 from chatdraw.sketches.svg_utils import add_smooth_vectors_to_tutorial, add_vectors_to_tutorial
 from chatdraw.utils import get_db_connection
 from chatdraw.sketches.prompts import sketch_first_prompt, system_prompt, gt_example
 from dotenv import load_dotenv
-from langchain.chat_models import init_chat_model
-from langchain_core.prompts import ChatPromptTemplate
-from opik.integrations.langchain import OpikTracer
+
 
 load_dotenv()
 
@@ -22,25 +21,28 @@ DEFAULT_TUTORIAL_LIST = (
 )
 
 
-callbacks=[]
-try: 
-    callbacks.append(OpikTracer())
-except: 
-    pass
-model = init_chat_model(
-    'claude-sonnet-4-20250514', 
-    model_provider="anthropic",
-    max_tokens=3000,
-    temperature=0,
-    top_k=1,
-    stop_sequences=['</answer>'],
-    callbacks=callbacks
-)
-prompt_template = ChatPromptTemplate.from_messages(
-    [("system", system_prompt), ("user", sketch_first_prompt)]
-)
-llm_chain = prompt_template | model
-
+def get_sketch_using_anthropic_llm(
+    concept,
+    model = 'claude-sonnet-4-20250514',
+    sketch_first_prompt=sketch_first_prompt, 
+    system_prompt=system_prompt, 
+    gt_example=gt_example,
+    res=50,
+):
+    if len(concept)>200: 
+        raise ValueError("Try to sum up the concept using less words")
+    return anthropic.Anthropic().messages.create(**{
+        'model':model,
+        'max_tokens':3000,
+        'system': system_prompt.replace('{res}',str(res)),
+        'messages':[{
+            "role":"user",
+            "content":sketch_first_prompt.replace('{concept}',concept).replace('{gt_sketches_str}',gt_example)
+        }],
+        'temperature':0,
+        'top_k':1,
+        'stop_sequences':['</answer>'],
+    })
 
 
 def extract_xml(text: str, tag: str) -> str:
@@ -70,17 +72,11 @@ def add_concept_to_db(concept) -> Dict:
             print(f"The {concept} concept is already available")
             return answer_dict_curr[0]
         # create new sketch
-        if len(concept)>200: 
-            raise ValueError("Try to sum up the concept using less words")
-        model_response = llm_chain.invoke({
-            "concept":concept,
-            "res":str(50),
-            "gt_sketches_str":gt_example,
-        })
-        txt_response = model_response.content
+        model_response = get_sketch_using_anthropic_llm(concept)
+        txt_response = model_response.content[0].text
         answer = extract_xml(txt_response+"</answer>", "answer")
         answer_dict = xmltodict.parse(answer)
-        model_name = model_response.response_metadata["model_name"]
+        model_name = model_response.model
         # add it to the db
         cur.execute("""
             INSERT INTO sketch (concept, model_json, model_name)
@@ -119,4 +115,4 @@ def load_tutorial(concept:str) -> Dict:
 
 
 if __name__ == "__main__":
-    print(load_tutorial("mouse"))
+    print(load_tutorial("giraffe"))

@@ -15,8 +15,6 @@ dependencies = [
     "psycopg2-binary",
     "python-dotenv",
     "pytest",
-    "langchain[anthropic]",
-    "opik",
 ]
 [build-system]
 requires = ["setuptools>=61.0"]
