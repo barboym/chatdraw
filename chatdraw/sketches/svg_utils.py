@@ -89,15 +89,13 @@ def render_tutorial_to_pil(strokes, size=600, line_width=2, last_step_highlighte
 
 
 def parse_path(d):
-    # Simple parser for 'M' and 'L' commands
-    tokens = re.findall(r'([ML])\s*([\d\.\-]+),([\d\.\-]+)', d)
     points = []
-    for _, x, y in tokens:
-        points.append((float(x), float(y)))
+    for  x, y in zip(d.split()[1::3],d.split()[2::3]):
+        points.append((int(float(x)), int(float(y))))
     return points
 
 
-def svg_to_points(svg_content) -> List[List[Tuple[float,float]]]:
+def svg_to_points(svg_content) -> List[List[Tuple[int,int]]]:
     """
     Parses SVG content and extracts paths as lists of (x, y) points.
     Returns: List of lists of points.
