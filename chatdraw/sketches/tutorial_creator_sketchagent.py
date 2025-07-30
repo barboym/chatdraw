@@ -3,7 +3,7 @@ import re
 from typing import Dict
 import xmltodict
 import anthropic
-from chatdraw.sketches.svg_utils import add_smooth_vectors_to_tutorial, add_vectors_to_tutorial
+from chatdraw.sketches.svg_utils import DEFAULT_RES, add_smooth_vectors_to_tutorial, add_vectors_to_tutorial
 from chatdraw.utils import get_db_connection
 from chatdraw.sketches.prompts import sketch_first_prompt, system_prompt, gt_example
 from dotenv import load_dotenv
@@ -27,7 +27,7 @@ def get_sketch_using_anthropic_llm(
     sketch_first_prompt=sketch_first_prompt, 
     system_prompt=system_prompt, 
     gt_example=gt_example,
-    res=50,
+    res=DEFAULT_RES,
 ):
     if len(concept)>200: 
         raise ValueError("Try to sum up the concept using less words")

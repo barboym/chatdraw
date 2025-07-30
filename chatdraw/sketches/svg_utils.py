@@ -6,6 +6,9 @@ from PIL import Image, ImageDraw
 from typing import List, Tuple
 import xml.etree.ElementTree as ET
 
+DEFAULT_RES = 50 # the resolution of the svg
+DEFAULT_CELL_SIZE = 12 # the pixels size of each cell
+
 
 def parse_point(s):
     s = s.strip("'")
@@ -19,15 +22,16 @@ def parse_point(s):
 assert parse_point("x4y10") == (4,10)
 assert parse_point("x15y25") == (15,25)
 
-def cell_to_pixel(text,res=50,cell_size=12):
+def cell_to_pixel(text,res=DEFAULT_RES,cell_size=DEFAULT_CELL_SIZE):
     x,y = parse_point(text)
     j,i = x-1,y-1
     img_height = (res + 1) * cell_size
     center_y = int(img_height - cell_size - (i * cell_size) - cell_size / 2)
     center_x = int(j * cell_size + cell_size / 2 + cell_size)
-    return center_x,center_y
+    size = res*cell_size
+    return size - center_x,size - center_y
 
-assert cell_to_pixel("x6y7",res=50,cell_size=12) == (78, 522)
+assert cell_to_pixel("x6y7",res=50,cell_size=12) == (522, 78)
 
 
 def add_vectors_to_tutorial(tutorial: Dict) -> Dict:
@@ -72,8 +76,9 @@ def add_smooth_vectors_to_tutorial(tutorial: Dict) -> Dict:
         step_info["smoothed_vector"] = make_smooth_stroke(step_info["vector"])
     return tutorial
 
-def render_tutorial_to_pil(strokes, size=600, line_width=2, last_step_highlighted=False):
+def render_tutorial_to_pil(strokes, res=DEFAULT_RES, cell_size=DEFAULT_CELL_SIZE, line_width=2, last_step_highlighted=False):
     # Create a white background image
+    size = res*cell_size
     image = Image.new('RGB', (size, size), (255, 255, 255))
     draw = ImageDraw.Draw(image)
 
