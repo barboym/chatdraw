@@ -3,10 +3,12 @@ from fastapi import FastAPI, HTTPException
 from typing import Any
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
+from fastapi.staticfiles import StaticFiles
 
 from chatdraw.chatflows.chat_system import ChatMessage, ChatResponse, ChatHandler
 from chatdraw.chatflows.drawtutorial import DrawingProject
 from chatdraw.chatflows.greeting import GreetingProject
+
 
 chat_handler = ChatHandler()
 chat_handler.register_project("greeting",GreetingProject(["DrawingProject"]))
@@ -42,8 +44,9 @@ def check_malicious_code(text: str) -> bool:
             return True
     return False
 
+
 @app.post("/", response_model=ChatResponse)
-async def main(
+async def send(
     message: ChatMessage
 ) -> Any:
     if check_malicious_code(message.message.content) or check_malicious_code(message.context):
@@ -52,7 +55,9 @@ async def main(
             detail="Potentially unsafe content detected in text"
         )
     return chat_handler.process_message(message)
-    
+
+app.mount("/", StaticFiles(directory='dist', html=True), name='static')
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=80, reload=True)
