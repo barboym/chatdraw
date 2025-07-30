@@ -34,7 +34,7 @@ def cell_to_pixel(text,res=DEFAULT_RES,cell_size=DEFAULT_CELL_SIZE):
 assert cell_to_pixel("x6y7",res=50,cell_size=12) == (522, 78)
 
 
-def add_vectors_to_tutorial(tutorial: Dict) -> Dict:
+def add_vectors_to_tutorial(tutorial: Dict,res=DEFAULT_RES,cell_size=DEFAULT_CELL_SIZE) -> Dict:
     """
     caclulate strock vector for the tutorial 
     """
@@ -42,8 +42,9 @@ def add_vectors_to_tutorial(tutorial: Dict) -> Dict:
     for step_info in strokes.values():
         pixels = []
         for p in step_info["points"].split(", "):
-
-            pixels.append(cell_to_pixel(p,res=50,cell_size=12))
+            pixels.append(cell_to_pixel(p,res=res,cell_size=cell_size))
+        if len(pixels)==1: # treat single point case
+            pixels = list(map(tuple,(np.array(pixels*5) + np.array([[0,0],[1,0],[1,1],[0,1],[-1,-1]])).astype(int)))
         step_info["vector"] = pixels
     return tutorial
 
@@ -86,10 +87,10 @@ def render_tutorial_to_pil(strokes, res=DEFAULT_RES, cell_size=DEFAULT_CELL_SIZE
     for i, stroke in enumerate(strokes):
         points = [(point[0], size - point[1]) for point in stroke]
         # If this is the last stroke and highlighting is enabled
+        fill=(0, 0, 0)
         if last_step_highlighted and i == len(strokes) - 1:
-            draw.line(points, fill=(0, 255, 0), width=line_width)
-        else:
-            draw.line(points, fill=(0, 0, 0), width=line_width)
+            fill=(0, 255, 0)
+        draw.line(points, fill=fill, width=line_width)
     return image 
 
 
