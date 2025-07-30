@@ -13,6 +13,8 @@ class DrawingProject(ProjectHandler):
             return self._start(message)
         elif message.context=="chooseconcept":
             return self._chooseconcept(message)
+        elif message.context=="end":
+            return self._end(message)
         return self._draw_step(message)
     
     def _start(self, message: ChatMessage) -> ChatResponse:
@@ -29,18 +31,23 @@ class DrawingProject(ProjectHandler):
             response=[f"What a good choice. Lets draw a {concept}."] + response.response,
             next_context=response.next_context)
 
+    def _end(self, message: ChatMessage) -> ChatResponse:
+        response = []
+        response.append(f"Thats it. Thank you for drawing with me.")
+        return ChatResponse(response=response, next_context="")
+
     def _draw_step(self, message: ChatMessage) -> ChatResponse:
         concept, step = message.context.split(",")
         step = int(step)
         sorted_strokes, curr_stroke_id, image_txt, smooth_strokes = self._get_strokes(concept, step)
 
         response = []
-        # if step>1 and message.message.mtype=="image":
-        #     user_points = svg_to_points(message.message.content)
-        #     score = get_drawing_score(user_points,smooth_strokes[:-1])
-        #     response.append(
-        #         f"Your drawing score is: {score}"
-        #     )
+        if step>1 and message.message.mtype=="image":
+            user_points = svg_to_points(message.message.content)
+            score = get_drawing_score(user_points,smooth_strokes[:-1])
+            response.append(
+                f"Your drawing score is: {score}"
+            )
         response += [
             f"Please draw the {curr_stroke_id}. Like in the next example:",
             AtomicMessage(content=image_txt, mtype="image")
@@ -48,7 +55,7 @@ class DrawingProject(ProjectHandler):
 
         next_context = f"{concept},{step+1}" if step < len(sorted_strokes) else ""
         if not next_context:
-            response.append(f"Thats it. Thank you for drawing a {concept} with me.")
+            next_context = "end"
 
         return ChatResponse(response=response, next_context=next_context)
 

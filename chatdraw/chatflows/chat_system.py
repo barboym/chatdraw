@@ -73,6 +73,8 @@ class ChatHandler:
         """Route to current project handler"""
         #TODO: change the string scheme with dict scheme
         context_list = message.context.split(".") 
+        if "_" not in context_list[-1]:
+            context_list.pop()
         current_project, current_state = context_list[-1].split("_")
 
         project = self.projects[current_project]

@@ -18,7 +18,11 @@
             "module": "uvicorn",
             "args": [
                 "app:app",
-                "--reload"
+                "--reload",
+                "--port",
+                "80",
+                "--host",
+                "0.0.0.0"
             ],
             "jinja": true,
             "cwd": "${fileDirname}"
