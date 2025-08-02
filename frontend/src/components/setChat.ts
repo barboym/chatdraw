@@ -32,7 +32,7 @@ export function setChat(context_start:string=''){
         if (waitingForResponse.value === true) return
         waitingForResponse.value=true
         addMessagesSend(message)
-        await fetch('http://127.0.0.1:8005/', {
+        await fetch('/', {
         method: 'POST',
         headers: {
             'accept': 'application/json',
