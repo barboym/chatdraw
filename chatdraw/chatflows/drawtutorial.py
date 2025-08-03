@@ -10,19 +10,29 @@ class DrawingProject(ProjectHandler):
     
     def handle_message(self,message: ChatMessage) -> ChatResponse:
         if message.context=="start":
-            return self._start(message)
+            return self._start()
         elif message.context=="chooseconcept":
             return self._chooseconcept(message)
         elif message.context=="end":
             return self._end(message)
         return self._draw_step(message)
     
-    def _start(self, message: ChatMessage) -> ChatResponse:
+    def _start(self) -> ChatResponse:
         return ChatResponse(
             response=f"What would you like to draw?",
             next_context="chooseconcept")
 
     def _chooseconcept(self, message: ChatMessage) -> ChatResponse:
+        if message.message.mtype=="image":
+            return ChatResponse(
+                response = [
+                    AtomicMessage(
+                        content="You need to write a concept you would like to draw. Try writing a noun that comes to your mind.",
+                        mtype="text"
+                        )   
+                ],
+                next_context="chooseconcept"
+            )
         concept=message.message.content
         response =  self._draw_step(
             ChatMessage(message=AtomicMessage(content="",mtype="text"),context=f"{concept},1")
