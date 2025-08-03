@@ -1,6 +1,6 @@
 from chatdraw.chatflows.chat_system import AtomicMessage, ChatHandler, ChatMessage, ChatResponse, ProjectHandler
 from chatdraw.sketches.drawing_score import get_drawing_score
-from chatdraw.sketches.tutorial_creator_sketchagent import load_tutorial
+from chatdraw.sketches.tutorial_creator_sketchagent import load_tutorial, normalize_concept_string
 from chatdraw.sketches.svg_utils import render_tutorial_to_pil, svg_to_points
 from chatdraw.utils import encode_image_to_string
 
@@ -33,7 +33,10 @@ class DrawingProject(ProjectHandler):
                 ],
                 next_context="chooseconcept"
             )
+        
+        
         concept=message.message.content
+        concept = normalize_concept_string(concept)
         response =  self._draw_step(
             ChatMessage(message=AtomicMessage(content="",mtype="text"),context=f"{concept},1")
             )
@@ -49,8 +52,7 @@ class DrawingProject(ProjectHandler):
     def _draw_step(self, message: ChatMessage) -> ChatResponse:
         concept, step = message.context.split(",")
         step = int(step)
-        sorted_strokes, curr_stroke_id, image_txt, smooth_strokes = self._get_strokes(concept, step)
-
+        smooth_strokes, curr_stroke_name = self._get_strokes(concept, step)
         response = []
         if step>1 and message.message.mtype=="image":
             user_points = svg_to_points(message.message.content)
@@ -58,12 +60,21 @@ class DrawingProject(ProjectHandler):
             response.append(
                 f"Your drawing score is: {score}"
             )
+        else:
+            image_full = render_tutorial_to_pil(smooth_strokes)
+            image_full_txt = encode_image_to_string(image_full)
+            response += [
+                f"The full image will look like that:",
+                AtomicMessage(content=image_full_txt, mtype="image") 
+            ]
+        image = render_tutorial_to_pil(smooth_strokes[:step],last_step_highlighted=True)
+        image_txt = encode_image_to_string(image)
         response += [
-            f"Please draw the {curr_stroke_id}. Like in the next example:",
+            f"Please draw the {curr_stroke_name}. Like in the next example:",
             AtomicMessage(content=image_txt, mtype="image")
         ]
 
-        next_context = f"{concept},{step+1}" if step < len(sorted_strokes) else ""
+        next_context = f"{concept},{step+1}" if step < len(smooth_strokes) else ""
         if not next_context:
             next_context = "end"
 
@@ -73,11 +84,9 @@ class DrawingProject(ProjectHandler):
         tutorial = load_tutorial(concept)
         strokes = tutorial["answer"]["strokes"]
         sorted_strokes = sorted(strokes.items(), key=lambda x: int(x[0][1:]))
-        smooth_strokes = [stroke[1]["smoothed_vector"] for stroke in sorted_strokes[:step]]
+        smooth_strokes = [stroke[1]["smoothed_vector"] for stroke in sorted_strokes]
         curr_stroke_name = sorted_strokes[step-1][1]['id']
-        image = render_tutorial_to_pil(smooth_strokes,last_step_highlighted=True)
-        image_txt = encode_image_to_string(image)
-        return sorted_strokes,curr_stroke_name,image_txt, smooth_strokes
+        return smooth_strokes,curr_stroke_name
 
 
 if __name__=="__main__":
