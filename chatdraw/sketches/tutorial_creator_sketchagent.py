@@ -89,11 +89,38 @@ def add_concept_to_db(concept) -> Dict:
         cur.close()
         conn.close()
 
+def normalize_concept_string(s: str) -> str:
+    """
+    Normalizes a string by:
+    - Lowercasing
+    - Removing special characters (keeps alphanumerics and spaces)
+    - Removing articles ('a', 'an', 'the')
+    - Removing extra whitespace
+    - Stripping leading/trailing spaces
+
+    Args:
+        s (str): Input string
+
+    Returns:
+        str: Normalized string
+    """
+    # Lowercase
+    s = s.lower()
+    # Remove special characters (keep alphanumerics and spaces)
+    s = re.sub(r'[^a-z0-9\s]', '', s)
+    # Remove articles from the start, even if there are multiple
+    s = re.sub(r'^((a|an|the)\s+)+', '', s)
+    # Remove extra whitespace
+    s = re.sub(r'\s+', ' ', s)
+    # Strip leading/trailing spaces
+    s = s.strip()
+    return s
     
 def load_tutorial(concept:str) -> Dict:
     """
     General method for fetching tutorials
     """
+    concept = normalize_concept_string(concept)
     # First, try to fetch from postgres db
     conn = get_db_connection()
     cur = conn.cursor()
