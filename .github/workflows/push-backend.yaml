@@ -1,0 +1,45 @@
+## Copilot generated:
+# create github actions workflow that:
+# - works on pushs and merges to main where there are changes that are not in the frontend directory.
+# - create the environent that can run pytest on the code
+# - builds the frontend
+name: Push Backend
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'frontend/**'
+      - '.*/**'
+      - 'dist/**'
+      
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - 'frontend/**'
+      - '.*/**'
+      - 'dist/**'
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Run tests
+        run: |
+          if [ -f pytest.ini ] || [ -d tests ]; then pytest; fi

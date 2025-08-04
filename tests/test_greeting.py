@@ -3,7 +3,7 @@ from chatdraw.chatflows.chat_system import ChatMessage, ChatResponse
 
 def test_start_context_response():
     project = GreetingProject(available_projects=["ProjectA", "ProjectB"])
-    msg = ChatMessage(message="Hello", context="ProjectA_start")
+    msg = ChatMessage(message="Hello", context="start")
     response = project.handle_message(msg)
     assert isinstance(response, ChatResponse)
     assert "Welcome to my chat" in response.response[0].content
