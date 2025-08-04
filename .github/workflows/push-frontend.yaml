@@ -19,7 +19,7 @@ on:
       - 'frontend/**'
 
 jobs:
-  vitest:
+  deploy-frontend:
     runs-on: ubuntu-latest
     defaults:
       run:
