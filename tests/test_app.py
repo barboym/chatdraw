@@ -6,7 +6,7 @@ client = TestClient(app)
 
 
 
-@pytest.skip(reason="No db in testing env")
+@pytest.mark.skip(reason="No db in testing env")
 def test_app():
     json_data = {
         "message": "giraffe",

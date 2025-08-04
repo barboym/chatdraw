@@ -4,14 +4,14 @@ import pytest
 from chatdraw.utils import get_db_connection
 import json
 
-@pytest.skip(reason="No db in testing env")
+@pytest.mark.skip(reason="No db in testing env")
 def test_connection_works():
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("SELECT sketch_id FROM sketch WHERE concept = 'giraffe'")
     result = cur.fetchone()
 
-@pytest.skip(reason="No db in testing env")
+@pytest.mark.skip(reason="No db in testing env")
 def test_insert_query():
     conn = get_db_connection()
     cur = conn.cursor()
