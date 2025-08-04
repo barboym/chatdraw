@@ -29,8 +29,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
+       
       - name: Use Node.js LTS
         uses: actions/setup-node@v4
         with:
@@ -47,8 +46,12 @@ jobs:
       - name: Build frontend
         run: npm run build
 
+      - name: Checkout PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr checkout ${{ github.event.pull_request.number }}
+
       - name: commit the build
         uses: EndBug/add-and-commit@v9 
         with: 
           message: updating dist
-          branch: ${{ github.ref }}
