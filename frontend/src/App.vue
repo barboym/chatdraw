@@ -19,6 +19,6 @@ const submitMessageImage = async (input:string) => {
     <ChatWindow :messages="messages" />
     <InputContainerImage :submitFunction="submitMessageImage"/>
     
-    <InputContainer :submitFunction="submitMessage"/>
+    <div><InputContainer :submitFunction="submitMessage"/></div>
   </main>
 </template>
