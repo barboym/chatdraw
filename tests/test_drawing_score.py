@@ -4,8 +4,8 @@ from chatdraw.sketches.svg_utils import svg_to_points
 from chatdraw.sketches.tutorial_creator_sketchagent import load_tutorial
 import os
 
-pytest.skip(reason="No db in testing env",allow_module_level=True)
 
+@pytest.mark.skip(reason="drawing scores need to be entirely changed")
 def test_get_drawing_score_identical():
     user_points = [[(0, 0), (1, 1), (2, 2)]]
     system_points = [[(0, 0), (1, 1), (2, 2)]]
@@ -41,6 +41,7 @@ def test_get_drawing_score_overall_shift_invariant():
     score_unshifted = get_drawing_score([[(-5, -5), (-4, -4), (-3, -3)]], [[(0, 0), (1, 1), (2, 2)]])
     assert abs(score_shifted - score_unshifted) < 1e-6
 
+@pytest.mark.skip(reason="No db in testing env")
 def test_with_an_actual_banana():
     module_path = os.path.abspath(__file__)
     module_directory = os.path.dirname(module_path)
