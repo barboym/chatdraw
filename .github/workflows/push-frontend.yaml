@@ -39,7 +39,7 @@ jobs:
         run: npm ci
 
       - name: Run Vite tests
-        run: npm run test
+        run: npm run test:unit
 
       - name: Build frontend
         run: npm run build
