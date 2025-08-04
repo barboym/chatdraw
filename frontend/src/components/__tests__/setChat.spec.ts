@@ -73,6 +73,7 @@ describe('setChat', () => {
 
   it('sendMessage adds user image message and handles API response', async () => {
     const chat = setChat()
+    global.URL.createObjectURL = vi.fn(() => 'data:image/png;base64,userimgdata')
     await chat.sendMessage({ mtype: 'image', content: 'userimgdata' })
     expect(chat.messages.value[0]).toMatchObject({
       imageUrl: 'data:image/png;base64,userimgdata',
@@ -92,12 +93,11 @@ describe('setChat', () => {
     })
   })
 
-  it('addMessages throws error for invalid mtype', () => {
+  it('addMessages throws error for invalid mtype', async () => {
     const chat = setChat()
-    expect(() =>
-      // @ts-expect-error: purposely passing invalid mtype
-      chat['addMessages']([{ mtype: 'invalid', content: 'oops' }], false),
-    ).toThrow("Invalid mtype: must be either 'text' or 'image'")
+    // @ts-expect-error: purposely passing invalid mtype
+    const promise = chat.sendMessage({ mtype: 'invalid', content: 'oops' })
+    await expect(promise).rejects.toThrow("Invalid mtype: must be either 'text' or 'image'")
   })
 
   it('handles fetch error gracefully', async () => {
