@@ -10,7 +10,12 @@
         "ms-python.python",
         "ms-python.vscode-pylance",
         "ms-python.debugpy",
-        "github.copilot"
+        "github.copilot",
+        "Vue.volar",
+        "vitest.explorer",
+        "esbenp.prettier-vscode",
+        "ms-vscode.js-debug-nightly",
+        "dbaeumer.vscode-eslint"
       ]
     }
   }

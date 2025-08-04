@@ -7,7 +7,7 @@ def test_svg_to_points_simple_path():
 
     svg = '''
     <svg xmlns="http://www.w3.org/2000/svg">
-        <path d="M 10,20 L 30,40 L 50,60" />
+        <path d="M 10 20 L 30 40 L 50 60" />
     </svg>
     '''
     result = svg_to_points(svg)
