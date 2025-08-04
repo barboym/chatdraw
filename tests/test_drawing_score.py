@@ -5,7 +5,7 @@ from chatdraw.sketches.tutorial_creator_sketchagent import load_tutorial
 import os
 
 
-@pytest.skip(reason="drawing scores need to be entirely changed")
+@pytest.mark.skip(reason="drawing scores need to be entirely changed")
 def test_get_drawing_score_identical():
     user_points = [[(0, 0), (1, 1), (2, 2)]]
     system_points = [[(0, 0), (1, 1), (2, 2)]]
