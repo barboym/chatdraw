@@ -18,5 +18,17 @@
         "dbaeumer.vscode-eslint"
       ]
     }
+  },
+  "remoteUser": "vscode",
+  "features": {
+    "git": {
+      "version": "latest",
+      "ppa": false
+    },
+    "node": {
+      "version": "lts",
+      "nodeGypDependencies": true
+    }
   }
+  // "postCreateCommand": "sudo apt-get install -y --no-install-recommends git && "
 }
