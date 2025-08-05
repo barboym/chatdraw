@@ -1,8 +1,4 @@
-## Copilot generated:
-# create github actions workflow that:
-# - works on pushs and merges to main where there are changes that are not in the frontend directory.
-# - create the environent that can run pytest on the code
-# - builds the frontend
+
 name: Push Backend
 
 on:
