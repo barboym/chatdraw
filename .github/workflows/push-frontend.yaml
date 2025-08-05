@@ -1,10 +1,3 @@
-## Copilot generated:
-# create github actions workflow that:
-# - works on pushs and merges to main where there are changes in the frontend directory.
-# - create the environent that can run vitest on the code
-# - if some tests don't pass blocks the merge to main.
-# - builds the frontend
-
 
 name: Frontend Tests
 
@@ -29,7 +22,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
       - name: Use Node.js LTS
         uses: actions/setup-node@v4
         with:
@@ -46,3 +41,7 @@ jobs:
       - name: Build frontend
         run: npm run build
 
+      - name: commit the build
+        uses: EndBug/add-and-commit@v9 
+        with: 
+          message: updating dist
