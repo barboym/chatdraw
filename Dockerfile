@@ -1,5 +1,7 @@
 FROM python:3.11-slim 
 
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+
 WORKDIR /usr/src/app
 
 COPY . .

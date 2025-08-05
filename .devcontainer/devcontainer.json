@@ -20,15 +20,8 @@
     }
   },
   "remoteUser": "vscode",
-  // "features": {
-  //   "git": {
-  //     "version": "latest",
-  //     "ppa": false
-  //   },
-  //   "node": {
-  //     "version": "lts",
-  //     "nodeGypDependencies": true
-  //   }
-  // }
-  "postCreateCommand": "sudo apt-get install -y --no-install-recommends git"
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/node:1": {}
+  }
 }
