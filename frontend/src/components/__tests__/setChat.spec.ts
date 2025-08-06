@@ -32,7 +32,7 @@ const mockFetch = vi.fn().mockResolvedValue({
   json: () => Promise.resolve(mockResponse),
 })
 
-globalThis.fetch = mockFetch as any
+globalThis.fetch = mockFetch
 
 describe('setChat', () => {
   beforeEach(() => {
@@ -112,5 +112,21 @@ describe('setChat', () => {
     })
     // Restore fetch
     globalThis.fetch = mockFetch as any
+  })
+
+  it('chooseconcept context prints a message if it takes too long to respond', async () => {
+    // Simulate slow fetch
+    globalThis.fetch = vi.fn().mockImplementation(() =>
+      new Promise(resolve => setTimeout(() => resolve({
+        json: () => Promise.resolve(mockResponse),
+      }), 3000))
+    )
+
+    const chat = setChat('chooseconcept')
+    const sendPromise = chat.sendMessage({ mtype: 'text', content: 'Waiting...' })
+    await sendPromise
+    expect(chat.messages.value[1].text).toBe("Let me think how to approach that..")
+    // Restore fetch
+    globalThis.fetch = mockFetch
   })
 })
