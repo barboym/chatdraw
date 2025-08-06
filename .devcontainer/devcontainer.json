@@ -10,8 +10,18 @@
         "ms-python.python",
         "ms-python.vscode-pylance",
         "ms-python.debugpy",
-        "github.copilot"
+        "github.copilot",
+        "Vue.volar",
+        "vitest.explorer",
+        "esbenp.prettier-vscode",
+        "ms-vscode.js-debug-nightly",
+        "dbaeumer.vscode-eslint"
       ]
     }
+  },
+  "remoteUser": "vscode",
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/node:1": {}
   }
 }

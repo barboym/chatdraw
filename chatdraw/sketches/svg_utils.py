@@ -39,9 +39,9 @@ def add_vectors_to_tutorial(tutorial: Dict,res=DEFAULT_RES,cell_size=DEFAULT_CEL
     caclulate strock vector for the tutorial 
     """
     strokes = tutorial["answer"]["strokes"]
-    for step_info in strokes.values():
+    for step_info in strokes:
         pixels = []
-        for p in step_info["points"].split(", "):
+        for p in step_info["points"].split(" "):
             pixels.append(cell_to_pixel(p,res=res,cell_size=cell_size))
         if len(pixels)==1: # treat single point case
             pixels = list(map(tuple,(np.array(pixels*5) + np.array([[0,0],[1,0],[1,1],[0,1],[-1,-1]])).astype(int)))
@@ -73,7 +73,7 @@ def add_smooth_vectors_to_tutorial(tutorial: Dict) -> Dict:
     caclulate strock vector for the tutorial 
     """
     strokes = tutorial["answer"]["strokes"]
-    for step_info in strokes.values():
+    for step_info in strokes:
         step_info["smoothed_vector"] = make_smooth_stroke(step_info["vector"])
     return tutorial
 

@@ -1,5 +1,4 @@
 
-from PIL import Image
 import psycopg2
 import dotenv
 import os
@@ -9,7 +8,7 @@ from io import BytesIO
 
 def get_db_connection():
     dotenv.load_dotenv()
-    return psycopg2.connect(f"host=postgres dbname=postgres user={os.environ['DB_CLIENUSER']} password={os.environ['DB_CLIENPASSWORD']}")
+    return psycopg2.connect(f"host=postgres dbname=postgres user={os.environ['DB_USER']} password={os.environ['DB_PASSWORD']}")
     
 
 def encode_image_to_string(image, format='JPEG', quality=85):
