@@ -83,11 +83,9 @@ class DrawingProject(ProjectHandler):
     def _get_strokes(self, concept, step):
         tutorial = load_tutorial(concept)
         strokes = tutorial["answer"]["strokes"]
-        smooth_strokes = [stroke["smoothed_vector"] for stroke in strokes[:step]]
+        smooth_strokes = [stroke["smoothed_vector"] for stroke in strokes]
         curr_stroke_name = strokes[step-1]['id']
-        image = render_tutorial_to_pil(smooth_strokes,last_step_highlighted=True)
-        image_txt = encode_image_to_string(image)
-        return strokes,curr_stroke_name,image_txt, smooth_strokes
+        return smooth_strokes,curr_stroke_name
 
 
 if __name__=="__main__":
