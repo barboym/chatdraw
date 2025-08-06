@@ -1,3 +1,4 @@
+import itertools
 import json
 import re
 from typing import Dict
@@ -62,8 +63,12 @@ def add_concept_to_db(concept) -> Dict:
             ChatMessage(role="system", content=system_prompt.replace("{res}",str(DEFAULT_RES))),
             ChatMessage(role="user", content=sketch_prompt.replace("{concept}",concept).replace("{gt_sketches_str}",HOUSE_EXAMPLE.model_dump_json())),
         ]
+        # parsing response into the structure used up till now
         chat_response = llm.chat(messages,top_k=1,)
-        answer_dict = json.loads(chat_response.message.blocks[0].text)
+        tutorial = json.loads(chat_response.message.blocks[0].text)
+        tutorial_dict = tutorial.model_dump()
+        tutorial_dict["strokes"]=list(itertools.chain(*[el["strokes"] for el in tutorial_dict["steps"]]))
+        answer_dict = {"answer":tutorial_dict}
         # add it to the db
         cur.execute("""
             INSERT INTO sketch (concept, model_json, model_name)
