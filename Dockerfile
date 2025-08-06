@@ -1,12 +1,10 @@
 FROM python:3.11-slim 
 
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-
 WORKDIR /usr/src/app
 
 COPY . .
 
-RUN pip install --no-cache-dir -e .
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh && pip install --no-cache-dir -e .
 
 COPY . .
 
