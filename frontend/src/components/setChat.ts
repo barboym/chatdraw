@@ -1,6 +1,5 @@
 
 import {ref} from 'vue';
-import {vi} from 'vitest';
 
 export type SystemMessage = {
   text?:string
@@ -32,6 +31,13 @@ export function setChat(context_start:string=''){
         if (waitingForResponse.value === true) return
         waitingForResponse.value=true
         addMessagesSend(message)
+        let timeoutId = null;
+        if(context.value.includes("chooseconcept")){
+          timeoutId = setTimeout(()=>{
+            addMessages([{"content":"Let me think how to approach that..","mtype":"text"}])
+          },1000)
+        }
+
         await fetch('/', {
         method: 'POST',
         headers: {
@@ -47,7 +53,10 @@ export function setChat(context_start:string=''){
         .then(stripAndSetContext)
         .then((msgs)=>addMessages(msgs))
         .catch(error => console.error('Error:', error))
-        .finally(() => {waitingForResponse.value=false})
+        .finally(() => {
+          if(timeoutId !== null) clearTimeout(timeoutId);
+          waitingForResponse.value=false
+        })
     }
 
     function stripAndSetContext(responseJson:Response) {
