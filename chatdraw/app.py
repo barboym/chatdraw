@@ -1,7 +1,6 @@
 import re
 from fastapi import FastAPI, HTTPException
 from typing import Any
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from chatdraw.chatflows.chat_system import ChatMessage, ChatResponse, ChatHandler
@@ -14,16 +13,6 @@ chat_handler.register_project("greeting",GreetingProject(["DrawingProject"]))
 chat_handler.register_project("DrawingProject",DrawingProject())
 
 app = FastAPI()
-
-# Enable CORS
-app.add_middleware( # change in production
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 
 def check_malicious_code(text: str) -> bool:
     # Check for potential script tags or suspicious patterns
