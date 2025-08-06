@@ -65,8 +65,7 @@ def add_concept_to_db(concept) -> Dict:
         ]
         # parsing response into the structure used up till now
         chat_response = llm.chat(messages,top_k=1,)
-        tutorial = json.loads(chat_response.message.blocks[0].text)
-        tutorial_dict = tutorial.model_dump()
+        tutorial_dict = json.loads(chat_response.message.blocks[0].text)
         tutorial_dict["strokes"]=list(itertools.chain(*[el["strokes"] for el in tutorial_dict["steps"]]))
         answer_dict = {"answer":tutorial_dict}
         # add it to the db
