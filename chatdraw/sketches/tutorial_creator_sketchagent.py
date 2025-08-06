@@ -1,11 +1,15 @@
+import itertools
 import json
 import re
 from typing import Dict
-import xmltodict
-import anthropic
 from chatdraw.sketches.svg_utils import DEFAULT_RES, add_smooth_vectors_to_tutorial, add_vectors_to_tutorial
+from chatdraw.sketches.tutorial_structure import HOUSE_EXAMPLE
 from chatdraw.utils import get_db_connection
-from chatdraw.sketches.prompts import sketch_first_prompt, system_prompt, gt_example
+from chatdraw.sketches.tutorial_structure import LLMOutput
+from llama_index.llms.anthropic import Anthropic
+from llama_index.core.llms import ChatMessage
+from chatdraw.sketches.prompts import sketch_prompt, system_prompt
+
 from dotenv import load_dotenv
 
 
@@ -20,29 +24,6 @@ DEFAULT_TUTORIAL_LIST = (
     "pen-pineapple-apple-pen",
 )
 
-
-def get_sketch_using_anthropic_llm(
-    concept,
-    model = 'claude-sonnet-4-20250514',
-    sketch_first_prompt=sketch_first_prompt, 
-    system_prompt=system_prompt, 
-    gt_example=gt_example,
-    res=DEFAULT_RES,
-):
-    if len(concept)>200: 
-        raise ValueError("Try to sum up the concept using less words")
-    return anthropic.Anthropic().messages.create(**{
-        'model':model,
-        'max_tokens':3000,
-        'system': system_prompt.replace('{res}',str(res)),
-        'messages':[{
-            "role":"user",
-            "content":sketch_first_prompt.replace('{concept}',concept).replace('{gt_sketches_str}',gt_example)
-        }],
-        'temperature':0,
-        'top_k':1,
-        'stop_sequences':['</answer>'],
-    })
 
 
 def extract_xml(text: str, tag: str) -> str:
@@ -72,11 +53,21 @@ def add_concept_to_db(concept) -> Dict:
             print(f"The {concept} concept is already available")
             return answer_dict_curr[0]
         # create new sketch
-        model_response = get_sketch_using_anthropic_llm(concept)
-        txt_response = model_response.content[0].text
-        answer = extract_xml(txt_response+"</answer>", "answer")
-        answer_dict = xmltodict.parse(answer)
-        model_name = model_response.model
+        model_name='claude-sonnet-4-20250514'
+        llm = Anthropic(
+            model=model_name, 
+            max_tokens=3000,
+            temperature=0,
+        ).as_structured_llm(LLMOutput)
+        messages = [
+            ChatMessage(role="system", content=system_prompt.replace("{res}",str(DEFAULT_RES))),
+            ChatMessage(role="user", content=sketch_prompt.replace("{concept}",concept).replace("{gt_sketches_str}",HOUSE_EXAMPLE.model_dump_json())),
+        ]
+        # parsing response into the structure used up till now
+        chat_response = llm.chat(messages,top_k=1,)
+        tutorial_dict = json.loads(chat_response.message.blocks[0].text)
+        tutorial_dict["strokes"]=list(itertools.chain(*[el["strokes"] for el in tutorial_dict["steps"]]))
+        answer_dict = {"answer":tutorial_dict}
         # add it to the db
         cur.execute("""
             INSERT INTO sketch (concept, model_json, model_name)

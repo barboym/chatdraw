@@ -4,17 +4,15 @@ version = "0.1.0"
 description = ""
 authors = [{ name="Moshe", email="barboym@gmail.com" }]
 dependencies = [
-    "openai",
-    "anthropic",
     "fastapi[standard]",
     "Pillow",
     "uvicorn",
-    "pydantic",
     "scipy",
-    "xmltodict",
     "psycopg2-binary",
     "python-dotenv",
     "pytest",
+    "llama-index-llms-anthropic",
+    "llama-index",
 ]
 [build-system]
 requires = ["setuptools>=61.0"]

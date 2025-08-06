@@ -12,6 +12,7 @@ services:
   server:
     container_name: drawcore
     depends_on: [postgres]
+    user: vscode
     build: .
     ports:
       - ${API_PORT}:80
