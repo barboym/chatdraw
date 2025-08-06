@@ -119,7 +119,7 @@ describe('setChat', () => {
     globalThis.fetch = vi.fn().mockImplementation(() =>
       new Promise(resolve => setTimeout(() => resolve({
         json: () => Promise.resolve(mockResponse),
-      }), 3000))
+      }), 2000))
     )
 
     const chat = setChat('chooseconcept')

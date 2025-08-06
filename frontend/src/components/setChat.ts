@@ -1,6 +1,5 @@
 
 import {ref} from 'vue';
-import {vi} from 'vitest';
 
 export type SystemMessage = {
   text?:string

@@ -3,6 +3,7 @@ import { ref, onMounted, watch } from 'vue'
 import { createSvgFromPaths } from './SVGUtils';
 import IconSendButton from './icons/IconSendButton.vue';
 import IconEraseButton from './icons/IconEraseButton.vue';
+import IconUndoButton from './icons/IconUndoButton.vue';
 
 const props = defineProps<{
   submitFunction: (svg:string) => void
@@ -141,6 +142,14 @@ watch(strokes, drawCanvas)
       <IconEraseButton/>
     </button>
     <button
+      class="Undo-button"
+      @click="() => { strokes.pop(); currentStroke = []; drawCanvas(); }"
+      :disabled="strokes.length === 0 && currentStroke.length === 0"
+      aria-label="Undo"
+    >
+      <IconUndoButton/>
+    </button>
+    <button
       class="send-button"
       @click="handleSubmit"
       :disabled="strokes.length === 0"
@@ -175,6 +184,28 @@ watch(strokes, drawCanvas)
     background: #bdbdbd;
     cursor: not-allowed;
   }
+  .undo-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #ffba52;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin: 0;
+    z-index: 2;
+  }
+  .undo-button:disabled {
+    background: #bdbdbd;
+    cursor: not-allowed;
+  }
 .input-container {
   display: flex;
   align-items: flex-end; /* Align items to the bottom */
@@ -203,8 +234,8 @@ watch(strokes, drawCanvas)
   background: #25d366;
   border: none;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -213,6 +244,7 @@ watch(strokes, drawCanvas)
   transition: background 0.2s;
   /* No need for absolute positioning since flex aligns it to the end */
   margin-bottom: 4px; /* Optional: small offset from bottom */
+  right: 8px;
 }
 
 /* Remove .input-field since it's not used in this component */
