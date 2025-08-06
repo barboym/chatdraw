@@ -1,0 +1,107 @@
+diff --git a/.devcontainer/devcontainer.json b/.devcontainer/devcontainer.json
+index 5919236..693fd59 100644
+--- a/.devcontainer/devcontainer.json
++++ b/.devcontainer/devcontainer.json
+@@ -13,5 +13,6 @@
+         "github.copilot"
+       ]
+     }
+-  }
++  },
++  "remoteUser": "vscode"
+ }
+diff --git a/Dockerfile b/Dockerfile
+index edf04cf..2418edf 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -13,4 +13,11 @@ RUN pip install --no-cache-dir -e .
+ 
+ COPY . .
+ 
++ARG USERNAME=vscode
++ARG USER_UID=1000
++ARG USER_GID=$USER_UID
++RUN groupadd --gid $USER_GID $USERNAME \
++    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME 
++USER $USERNAME
++
+ CMD ["uvicorn","app:app","--host","0.0.0.0","--port","80"]
+diff --git a/chatdraw/chatflows/drawtutorial.py b/chatdraw/chatflows/drawtutorial.py
+index 6d118e9..de7e86b 100755
+--- a/chatdraw/chatflows/drawtutorial.py
++++ b/chatdraw/chatflows/drawtutorial.py
+@@ -10,19 +10,29 @@ class DrawingProject(ProjectHandler):
+     
+     def handle_message(self,message: ChatMessage) -> ChatResponse:
+         if message.context=="start":
+-            return self._start(message)
++            return self._start()
+         elif message.context=="chooseconcept":
+             return self._chooseconcept(message)
+         elif message.context=="end":
+             return self._end(message)
+         return self._draw_step(message)
+     
+-    def _start(self, message: ChatMessage) -> ChatResponse:
++    def _start(self) -> ChatResponse:
+         return ChatResponse(
+             response=f"What would you like to draw?",
+             next_context="chooseconcept")
+ 
+     def _chooseconcept(self, message: ChatMessage) -> ChatResponse:
++        if message.message.mtype=="image":
++            return ChatResponse(
++                response = [
++                    AtomicMessage(
++                        content="You need to write a concept you would like to draw. Try writing a noun that comes to your mind.",
++                        mtype="text"
++                        )   
++                ],
++                next_context="chooseconcept"
++            )
+         concept=message.message.content
+         response =  self._draw_step(
+             ChatMessage(message=AtomicMessage(content="",mtype="text"),context=f"{concept},1")
+diff --git a/chatdraw/sketches/tutorial_creator_sketchagent.py b/chatdraw/sketches/tutorial_creator_sketchagent.py
+index c2222f9..4cf41c8 100755
+--- a/chatdraw/sketches/tutorial_creator_sketchagent.py
++++ b/chatdraw/sketches/tutorial_creator_sketchagent.py
+@@ -89,11 +89,38 @@ def add_concept_to_db(concept) -> Dict:
+         cur.close()
+         conn.close()
+ 
++def normalize_concept_string(s: str) -> str:
++    """
++    Normalizes a string by:
++    - Lowercasing
++    - Removing special characters (keeps alphanumerics and spaces)
++    - Removing articles ('a', 'an', 'the')
++    - Removing extra whitespace
++    - Stripping leading/trailing spaces
++
++    Args:
++        s (str): Input string
++
++    Returns:
++        str: Normalized string
++    """
++    # Lowercase
++    s = s.lower()
++    # Remove special characters (keep alphanumerics and spaces)
++    s = re.sub(r'[^a-z0-9\s]', '', s)
++    # Remove articles from the start, even if there are multiple
++    s = re.sub(r'^((a|an|the)\s+)+', '', s)
++    # Remove extra whitespace
++    s = re.sub(r'\s+', ' ', s)
++    # Strip leading/trailing spaces
++    s = s.strip()
++    return s
+     
+ def load_tutorial(concept:str) -> Dict:
+     """
+     General method for fetching tutorials
+     """
++    concept = normalize_concept_string(concept)
+     # First, try to fetch from postgres db
+     conn = get_db_connection()
+     cur = conn.cursor()
