@@ -15,7 +15,8 @@
         "vitest.explorer",
         "esbenp.prettier-vscode",
         "ms-vscode.js-debug-nightly",
-        "dbaeumer.vscode-eslint"
+        "dbaeumer.vscode-eslint",
+        "EditorConfig.EditorConfig"
       ]
     }
   },

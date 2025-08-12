@@ -1,5 +1,5 @@
 import pytest
-from chatdraw.sketches.drawing_score import get_drawing_score
+from chatdraw.drawing_score.wasserstein_score import get_drawing_score
 from chatdraw.sketches.svg_utils import svg_to_points
 from chatdraw.sketches.tutorial_creator_sketchagent import load_tutorial
 import os
