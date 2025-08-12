@@ -1,12 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import List
 
-PLAN_DESCRIPTION = """Think before you provide the steps. 
-First, think through what parts of the concept you want to sketch and the sketching order.
-Then, think about where the parts should be located on the grid.
-Finally, provide your response, step by step, using your analysis."""
-
-
 class SingleStroke(BaseModel):
     points: str = Field(description="A list of x-y coordinates defining the curve. These points define the path the stroke follows")
     id: str = Field(description="A short descriptive identifier for the stroke, explaining which part of the sketch it corresponds to")
@@ -17,7 +11,10 @@ class Step(BaseModel):
 
 class LLMOutput(BaseModel):
     concept: str = Field(description="The concept depicted in the sketch")
-    plan: str = Field(description=PLAN_DESCRIPTION)
+    plan: str = Field(description="""Think before you provide the steps. 
+First, think through what parts of the concept you want to sketch and the sketching order.
+Then, think about where the parts should be located on the grid.
+Finally, provide your response, step by step, using your analysis.""")
     steps: List[Step] = Field(description="List of sketching steps")
 
 
