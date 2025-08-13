@@ -54,13 +54,13 @@ class DrawingProject(ProjectHandler):
         step = int(step)
         smooth_strokes, curr_stroke_name = self._get_strokes(concept, step)
         response = []
-        if step>1 and message.message.mtype=="image":
-            user_points = svg_to_points(message.message.content)
-            score = get_drawing_score(user_points,smooth_strokes[:-1])
-            response.append(
-                f"Your drawing score is: {score}"
-            )
-        else:
+        # if step>1 and message.message.mtype=="image":
+        #     user_points = svg_to_points(message.message.content)
+        #     score = get_drawing_score(user_points,smooth_strokes[:-1])
+        #     response.append(
+        #         f"Your drawing score is: {score}"
+        #     )
+        if step==1:
             image_full = render_tutorial_to_pil(smooth_strokes)
             image_full_txt = encode_image_to_string(image_full)
             response += [
