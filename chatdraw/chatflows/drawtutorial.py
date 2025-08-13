@@ -1,7 +1,6 @@
 from chatdraw.chatflows.chat_system import AtomicMessage, ChatHandler, ChatMessage, ChatResponse, ProjectHandler
-from chatdraw.drawing_score.wasserstein_score import get_drawing_score
 from chatdraw.sketches.tutorial_creator_sketchagent import load_tutorial, normalize_concept_string
-from chatdraw.sketches.svg_utils import render_tutorial_to_pil, svg_to_points
+from chatdraw.sketches.svg_utils import render_tutorial_to_pil
 from chatdraw.utils import encode_image_to_string
 
 
