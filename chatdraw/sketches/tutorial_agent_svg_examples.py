@@ -104,5 +104,4 @@ class TutorialAgentSVGExmaples(TutorialAgentBase):
         chat_response = llm.chat(messages,top_k=1,)
         tutorial_dict = json.loads(chat_response.message.blocks[0].text) # type: ignore
         tutorial_dict["model_name"] = model_name
-        answer_dict = {"answer":tutorial_dict}
-        return answer_dict
+        return tutorial_dict

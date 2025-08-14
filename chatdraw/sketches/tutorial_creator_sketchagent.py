@@ -3,6 +3,7 @@ import re
 from typing import Dict, List
 from chatdraw.sketches.svg_utils import add_smooth_vectors_to_tutorial, parse_point_string_to_vector
 from chatdraw.sketches.tutorial_agent_base import Step, TutorialAgent
+from chatdraw.sketches.tutorial_agent_svg_examples import TutorialAgentSVGExmaples
 from chatdraw.utils import get_db_connection
 
 from dotenv import load_dotenv
@@ -33,7 +34,7 @@ def add_concept_to_db(concept) -> Dict:
             print(f"The {concept} concept is already available")
             return answer_dict_curr[0]
         # create new sketch
-        answer_dict = TutorialAgent().create_tutorial(concept)
+        answer_dict = TutorialAgentSVGExmaples().create_tutorial(concept)
         # add it to the db
         cur.execute("""
             INSERT INTO sketch (concept, model_json, model_name)
