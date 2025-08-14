@@ -118,6 +118,4 @@ class TutorialAgent(TutorialAgentBase):
         chat_response = llm.chat(messages,top_k=1,)
         tutorial_dict = json.loads(chat_response.message.blocks[0].text)
         tutorial_dict["model_name"] = model_name
-        tutorial_dict["strokes"]=list(itertools.chain(*[el["strokes"] for el in tutorial_dict["steps"]]))
-        answer_dict = {"answer":tutorial_dict}
-        return answer_dict
+        return tutorial_dict

@@ -1,3 +1,4 @@
+import itertools
 from chatdraw.chatflows.chat_system import AtomicMessage, ChatHandler, ChatMessage, ChatResponse, ProjectHandler
 from chatdraw.sketches.tutorial_creator_sketchagent import load_tutorial, normalize_concept_string
 from chatdraw.sketches.svg_utils import render_tutorial_to_pil
@@ -51,7 +52,8 @@ class DrawingProject(ProjectHandler):
     def _draw_step(self, message: ChatMessage) -> ChatResponse:
         concept, step = message.context.split(",")
         step = int(step)
-        smooth_strokes, curr_stroke_name = self._get_strokes(concept, step)
+        tutorial = load_tutorial(concept)
+
         response = []
         # if step>1 and message.message.mtype=="image":
         #     user_points = svg_to_points(message.message.content)
@@ -60,31 +62,27 @@ class DrawingProject(ProjectHandler):
         #         f"Your drawing score is: {score}"
         #     )
         if step==1:
+            smooth_strokes = itertools.chain([step["strokes"]["smooth_stroke"] for step in tutorial])
             image_full = render_tutorial_to_pil(smooth_strokes)
             image_full_txt = encode_image_to_string(image_full)
             response += [
                 f"The full image will look like that:",
                 AtomicMessage(content=image_full_txt, mtype="image") 
             ]
-        image = render_tutorial_to_pil(smooth_strokes[:step],last_step_highlighted=True)
+        response.append(tutorial[step]["thinking"])
+        smooth_strokes = itertools.chain(step["strokes"]["smooth_stroke"] for step in tutorial[:step])
+        smooth_strokes_highlight = itertools.chain(step["strokes"]["smooth_stroke"] for step in tutorial[step])
+        image = render_tutorial_to_pil(smooth_strokes_highlight,highlighted_strokes=smooth_strokes_highlight)
         image_txt = encode_image_to_string(image)
         response += [
-            f"Please draw the {curr_stroke_name}. Like in the next example:",
             AtomicMessage(content=image_txt, mtype="image")
         ]
 
-        next_context = f"{concept},{step+1}" if step < len(smooth_strokes) else ""
+        next_context = f"{concept},{step+1}" if step < len(tutorial) else ""
         if not next_context:
             next_context = "end"
 
         return ChatResponse(response=response, next_context=next_context)
-
-    def _get_strokes(self, concept, step):
-        tutorial = load_tutorial(concept)
-        strokes = tutorial["answer"]["strokes"]
-        smooth_strokes = [stroke["smoothed_vector"] for stroke in strokes]
-        curr_stroke_name = strokes[step-1]['id']
-        return smooth_strokes,curr_stroke_name
 
 
 if __name__=="__main__":

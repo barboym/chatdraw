@@ -1,8 +1,8 @@
 import json
 import re
-from typing import Dict
-from chatdraw.sketches.svg_utils import add_smooth_vectors_to_tutorial, add_vectors_to_tutorial
-from chatdraw.sketches.tutorial_agent_base import TutorialAgent
+from typing import Dict, List
+from chatdraw.sketches.svg_utils import add_smooth_vectors_to_tutorial, parse_point_string_to_vector
+from chatdraw.sketches.tutorial_agent_base import Step, TutorialAgent
 from chatdraw.utils import get_db_connection
 
 from dotenv import load_dotenv
@@ -72,8 +72,9 @@ def normalize_concept_string(s: str) -> str:
     # Strip leading/trailing spaces
     s = s.strip()
     return s
-    
-def load_tutorial(concept:str) -> Dict:
+        
+
+def load_tutorial(concept:str) -> List[dict]:
     """
     General method for fetching tutorials
     """
@@ -92,9 +93,9 @@ def load_tutorial(concept:str) -> Dict:
     finally:
         cur.close()
         conn.close()
-    add_vectors_to_tutorial(answer_dict)
-    add_smooth_vectors_to_tutorial(answer_dict)
-    return answer_dict
+    tutorial = answer_dict["steps"]
+    add_smooth_vectors_to_tutorial(tutorial)
+    return tutorial
 
 
 
