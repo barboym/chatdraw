@@ -1,10 +1,11 @@
-from typing import Dict, List, Tuple
+from typing import List, Tuple
 from scipy.interpolate import interp1d
 import re
 import numpy as np 
 from PIL import Image, ImageDraw
 from typing import List, Tuple
 import xml.etree.ElementTree as ET
+
 
 DEFAULT_RES = 50 # the resolution of the svg
 DEFAULT_CELL_SIZE = 12 # the pixels size of each cell
@@ -34,19 +35,16 @@ def cell_to_pixel(text,res=DEFAULT_RES,cell_size=DEFAULT_CELL_SIZE):
 assert cell_to_pixel("x6y7",res=50,cell_size=12) == (522, 78)
 
 
-def add_vectors_to_tutorial(tutorial: Dict,res=DEFAULT_RES,cell_size=DEFAULT_CELL_SIZE) -> Dict:
+def parse_point_string_to_vector(points_str:str,res=DEFAULT_RES,cell_size=DEFAULT_CELL_SIZE) -> List[Tuple[int,int]]:
     """
     caclulate strock vector for the tutorial 
     """
-    strokes = tutorial["answer"]["strokes"]
-    for step_info in strokes:
-        pixels = []
-        for p in step_info["points"].split(" "):
-            pixels.append(cell_to_pixel(p,res=res,cell_size=cell_size))
-        if len(pixels)==1: # treat single point case
-            pixels = list(map(tuple,(np.array(pixels*5) + np.array([[0,0],[1,0],[1,1],[0,1],[-1,-1]])).astype(int)))
-        step_info["vector"] = pixels
-    return tutorial
+    pixels = []
+    for p in points_str.split(" "):
+        pixels.append(cell_to_pixel(p,res=res,cell_size=cell_size))
+    if len(pixels)==1: # treat single point case
+        pixels = list(map(tuple,(np.array(pixels*5) + np.array([[0,0],[1,0],[1,1],[0,1],[-1,-1]])).astype(int)))
+    return pixels
 
 
 def make_smooth_stroke(draw_stroke:List[Tuple]) -> List[Tuple]:
@@ -68,16 +66,17 @@ def make_smooth_stroke(draw_stroke:List[Tuple]) -> List[Tuple]:
     return smoothed_strokes
 
 
-def add_smooth_vectors_to_tutorial(tutorial: Dict) -> Dict:
+def add_smooth_vectors_to_tutorial(tutorial: List[dict]) -> List[dict]:
     """
-    caclulate strock vector for the tutorial 
+    for each stroke in the tutorial parses the points to smooth vectors. 
     """
-    strokes = tutorial["answer"]["strokes"]
-    for step_info in strokes:
-        step_info["smoothed_vector"] = make_smooth_stroke(step_info["vector"])
+    for step in tutorial:
+        for stroke in step["strokes"]: 
+            stroke["vector"] = parse_point_string_to_vector(stroke["points"])
+            stroke["smoothed_vector"] = make_smooth_stroke(stroke["vector"])
     return tutorial
 
-def render_tutorial_to_pil(strokes, res=DEFAULT_RES, cell_size=DEFAULT_CELL_SIZE, line_width=2, last_step_highlighted=False):
+def render_tutorial_to_pil(strokes, res=DEFAULT_RES, cell_size=DEFAULT_CELL_SIZE, line_width=2, highlighted_strokes=None):
     # Create a white background image
     size = res*cell_size
     image = Image.new('RGB', (size, size), (255, 255, 255))
@@ -88,9 +87,12 @@ def render_tutorial_to_pil(strokes, res=DEFAULT_RES, cell_size=DEFAULT_CELL_SIZE
         points = [(point[0], size - point[1]) for point in stroke]
         # If this is the last stroke and highlighting is enabled
         fill=(0, 0, 0)
-        if last_step_highlighted and i == len(strokes) - 1:
-            fill=(0, 255, 0)
         draw.line(points, fill=fill, width=line_width)
+    if highlighted_strokes is not None:
+        for stroke in highlighted_strokes:
+            fill=(0, 255, 0)
+            points = [(point[0], size - point[1]) for point in stroke]
+            draw.line(points, fill=fill, width=line_width)
     return image 
 
 

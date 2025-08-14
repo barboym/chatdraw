@@ -8,9 +8,8 @@ from chatdraw.chatflows.drawtutorial import DrawingProject
 from chatdraw.chatflows.greeting import GreetingProject
 
 
-chat_handler = ChatHandler()
-chat_handler.register_project("greeting",GreetingProject(["DrawingProject"]))
-chat_handler.register_project("DrawingProject",DrawingProject())
+chat_handler = ChatHandler("greeting_start")
+chat_handler.register_project("greeting",DrawingProject())
 
 app = FastAPI()
 

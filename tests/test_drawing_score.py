@@ -40,15 +40,3 @@ def test_get_drawing_score_overall_shift_invariant():
     score_shifted = get_drawing_score(user_points, system_points)
     score_unshifted = get_drawing_score([[(-5, -5), (-4, -4), (-3, -3)]], [[(0, 0), (1, 1), (2, 2)]])
     assert abs(score_shifted - score_unshifted) < 1e-6
-
-@pytest.mark.skip(reason="No db in testing env")
-def test_with_an_actual_banana():
-    module_path = os.path.abspath(__file__)
-    module_directory = os.path.dirname(module_path)
-    with open(f"{module_directory}/example_post_image.svg","r") as f:
-        user_points = svg_to_points(f.read())
-    strokes = load_tutorial("banana")["answer"]["strokes"]
-    sorted_strokes = sorted(strokes.items(), key=lambda x: int(x[0][1:]))
-    system_points = [stroke[1]["smoothed_vector"] for stroke in sorted_strokes[:3]]
-    score = get_drawing_score(user_points, system_points)
-    assert score > 0.
