@@ -62,8 +62,9 @@ class DefaultProjectHandler(ProjectHandler):
 
 class ChatHandler:
     """Simple dispatcher - just routes to the current project"""
-    def __init__(self):
+    def __init__(self,default_context):
         self.projects: Dict[str, ProjectHandler] = {}
+        self.default_context = default_context
 
     def register_project(self, project_name: str, handler: ProjectHandler):
         """Register any project handler"""
@@ -75,6 +76,8 @@ class ChatHandler:
         context_list = message.context.split(".") 
         if "_" not in context_list[-1]:
             context_list.pop()
+        if len(context_list)==0:
+            context_list.append(self.default_context)
         current_project, current_state = context_list[-1].split("_")
 
         project = self.projects[current_project]
@@ -109,6 +112,6 @@ class ChatHandler:
      
      
 if __name__=="__main__":
-    ch = ChatHandler()
+    ch = ChatHandler("")
     ch.register_project("default",DefaultProjectHandler())
     print(ch.process_message(ChatMessage(message="hey there",context="default_start")))

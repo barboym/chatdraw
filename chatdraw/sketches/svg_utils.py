@@ -91,7 +91,8 @@ def render_tutorial_to_pil(strokes, res=DEFAULT_RES, cell_size=DEFAULT_CELL_SIZE
     if highlighted_strokes is not None:
         for stroke in highlighted_strokes:
             fill=(0, 255, 0)
-            draw.line(stroke, fill=fill, width=line_width)
+            points = [(point[0], size - point[1]) for point in stroke]
+            draw.line(points, fill=fill, width=line_width)
     return image 
 
 

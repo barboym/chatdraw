@@ -19,7 +19,9 @@ class DrawingProject(ProjectHandler):
     
     def _start(self) -> ChatResponse:
         return ChatResponse(
-            response=f"What would you like to draw?",
+            response=f"""Welcome to Chatdraw. 
+I am a drawing tutorial bot for drawing simple sketches. 
+What would you like to learn to draw today?""",
             next_context="chooseconcept")
 
     def _chooseconcept(self, message: ChatMessage) -> ChatResponse:
@@ -62,17 +64,19 @@ class DrawingProject(ProjectHandler):
         #         f"Your drawing score is: {score}"
         #     )
         if step==1:
-            smooth_strokes = itertools.chain([step["strokes"]["smooth_stroke"] for step in tutorial])
+            strokes = itertools.chain(*[step["strokes"] for step in tutorial])
+            smooth_strokes = [el["smoothed_vector"] for el in strokes]
             image_full = render_tutorial_to_pil(smooth_strokes)
             image_full_txt = encode_image_to_string(image_full)
             response += [
                 f"The full image will look like that:",
                 AtomicMessage(content=image_full_txt, mtype="image") 
             ]
-        response.append(tutorial[step]["thinking"])
-        smooth_strokes = itertools.chain(step["strokes"]["smooth_stroke"] for step in tutorial[:step])
-        smooth_strokes_highlight = itertools.chain(step["strokes"]["smooth_stroke"] for step in tutorial[step])
-        image = render_tutorial_to_pil(smooth_strokes_highlight,highlighted_strokes=smooth_strokes_highlight)
+        response.append(tutorial[step-1]["thinking"])
+        strokes = itertools.chain(*[step["strokes"] for step in tutorial[:step]])
+        smooth_strokes = [el["smoothed_vector"] for el in strokes]   
+        smooth_strokes_highlight = [el["smoothed_vector"] for el in tutorial[step-1]["strokes"]]     
+        image = render_tutorial_to_pil(smooth_strokes,highlighted_strokes=smooth_strokes_highlight)
         image_txt = encode_image_to_string(image)
         response += [
             AtomicMessage(content=image_txt, mtype="image")

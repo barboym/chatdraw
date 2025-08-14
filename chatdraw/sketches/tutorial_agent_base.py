@@ -9,6 +9,7 @@ from llama_index.core.llms import ChatMessage
 
 from chatdraw.sketches.svg_utils import DEFAULT_RES
 
+
 class SingleStroke(BaseModel):
     points: str = Field(description="A list of x-y coordinates defining the curve. These points define the path the stroke follows")
     id: str = Field(description="A short descriptive identifier for the stroke, explaining which part of the sketch it corresponds to")

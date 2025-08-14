@@ -38,7 +38,7 @@ def add_concept_to_db(concept) -> Dict:
         cur.execute("""
             INSERT INTO sketch (concept, model_json, model_name)
             VALUES (%s, %s, %s)
-        """, (concept, json.dumps(answer_dict), answer_dict["answer"]["model_path"]))
+        """, (concept, json.dumps(answer_dict), answer_dict["model_name"]))
         conn.commit()
         print(f"Added the {concept} to the db")
         return answer_dict
