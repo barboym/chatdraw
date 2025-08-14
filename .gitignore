@@ -3,6 +3,7 @@ __pycache__/
 .pytest_cache/
 .ipynb_checkpoints/
 .env
+.venv
 *.egg-info/
 
 # Logs
