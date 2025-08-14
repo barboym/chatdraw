@@ -1,6 +1,5 @@
 
 from abc import abstractmethod
-import itertools
 import json
 from typing import List
 from pydantic import BaseModel, Field
@@ -117,6 +116,6 @@ class TutorialAgent(TutorialAgentBase):
         ]
         # parsing response into the structure used up till now
         chat_response = llm.chat(messages,top_k=1,)
-        tutorial_dict = json.loads(chat_response.message.blocks[0].text)
+        tutorial_dict = json.loads(chat_response.message.blocks[0].text) # type: ignore
         tutorial_dict["model_name"] = model_name
         return tutorial_dict

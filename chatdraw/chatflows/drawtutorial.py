@@ -90,7 +90,7 @@ What would you like to learn to draw today?""",
 
 
 if __name__=="__main__":
-    ch = ChatHandler()
+    ch = ChatHandler("")
     ch.register_project("greeting",DrawingProject())
     context="greeting_start"
     while context!="":
