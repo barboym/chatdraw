@@ -13,7 +13,7 @@ services:
     container_name: drawcore
     depends_on: [postgres]
     user: vscode
-    build: .
+    build: ./chatdraw
     ports:
       - ${API_PORT}:80
     volumes:

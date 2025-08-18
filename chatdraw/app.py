@@ -2,6 +2,7 @@ import re
 from fastapi import FastAPI, HTTPException
 from typing import Any
 from fastapi.staticfiles import StaticFiles
+import uvicorn
 
 from chatdraw.chatflows.chat_system import ChatMessage, ChatResponse, ChatHandler
 from chatdraw.chatflows.drawtutorial import DrawingProject
@@ -44,3 +45,6 @@ async def send(
 
 app.mount("/", StaticFiles(directory='dist', html=True), name='static')
 
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=80, reload=True)

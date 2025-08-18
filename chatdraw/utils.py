@@ -3,11 +3,6 @@ import base64
 from io import BytesIO
 
 
-def get_db_connection():
-    """Deprecated: kept for backward compatibility in tests. Use SQLAlchemy sessions instead."""
-    raise RuntimeError("get_db_connection is deprecated. Use SQLAlchemy via chatdraw.db.get_session().")
-    
-
 def encode_image_to_string(image, image_format='JPEG', quality=85):
     """
     Encode a PIL image to a base64 string for REST API transmission.
