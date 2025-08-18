@@ -6,11 +6,10 @@ client = TestClient(app)
 
 
 
-@pytest.mark.skip(reason="No db in testing env")
 def test_app():
     json_data = {
         "message": "giraffe",
-        "context": "greeting_start.DrawingProject_chooseconcept"
+        "context": "greeting_chooseconcept"
     }
     header = {
         "Content-Type": "application/json",
@@ -18,6 +17,6 @@ def test_app():
     }
     response = client.post("/", json=json_data, headers=header)
     assert response.status_code == 200
-    assert response.json()["next_context"] == 'greeting_start.DrawingProject_giraffe,2'
+    assert response.json()["next_context"] == 'greeting_giraffe,2'
     assert response.json()["response"][0]["content"] == 'What a good choice. Lets draw a giraffe.'
     

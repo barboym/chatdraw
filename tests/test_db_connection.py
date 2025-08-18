@@ -1,40 +1,27 @@
-
-
 import pytest
-from chatdraw.utils import get_db_connection
-import json
+from sqlalchemy import select
 
-@pytest.mark.skip(reason="No db in testing env")
+from chatdraw.db import Sketch, get_db_session
+
+
 def test_connection_works():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT sketch_id FROM sketch WHERE concept = 'giraffe'")
-    result = cur.fetchone()
+    with get_db_session() as session:
+        _ = session.execute(select(Sketch.sketch_id).limit(1)).first()
 
-@pytest.mark.skip(reason="No db in testing env")
+
 def test_insert_query():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    conn.autocommit = False  # start transaction
-    try:
-       
+    with get_db_session() as session:
+        session.begin()
+        concept = 'test'
         model_json = {'q':['a','b']}
-        cur.execute("""
-            INSERT INTO sketch (concept, model_json, model_name)
-            VALUES (%s, %s, %s)
-        """, ('test', json.dumps(model_json), 'model_test'))
-
-        cur.execute("SELECT model_json FROM sketch WHERE concept='test'")
-        model_json_fetch = cur.fetchone()
-        assert str((model_json,))==str(model_json_fetch)  # check what would be inserted
-
-          # undo insert
-        # print("Rolled back successfully.")
-
-    finally:
-        conn.rollback()
-        cur.close()
-        conn.close()
+        try:
+            sketch = Sketch(concept=concept, model_json=model_json, model_name='model_test')
+            session.add(sketch)
+            session.flush()
+            fetched = session.execute(select(Sketch.model_json).where(Sketch.concept==concept)).scalar_one()
+            assert model_json == fetched
+        finally:
+            session.rollback()
 
 if __name__=="__main__":
     test_connection_works()

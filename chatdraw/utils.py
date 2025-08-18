@@ -1,17 +1,14 @@
 
-import psycopg2
-import dotenv
-import os
 import base64
 from io import BytesIO
 
 
 def get_db_connection():
-    dotenv.load_dotenv()
-    return psycopg2.connect(f"host=postgres dbname=postgres user={os.environ['DB_USER']} password={os.environ['DB_PASSWORD']}")
+    """Deprecated: kept for backward compatibility in tests. Use SQLAlchemy sessions instead."""
+    raise RuntimeError("get_db_connection is deprecated. Use SQLAlchemy via chatdraw.db.get_session().")
     
 
-def encode_image_to_string(image, format='JPEG', quality=85):
+def encode_image_to_string(image, image_format='JPEG', quality=85):
     """
     Encode a PIL image to a base64 string for REST API transmission.
     
@@ -26,14 +23,11 @@ def encode_image_to_string(image, format='JPEG', quality=85):
     # Create a BytesIO buffer
     buffer = BytesIO()
     # Save image to buffer
-    if format.upper() == 'JPEG':
-        image.save(buffer, format=format, quality=quality)
+    if image_format.upper() == 'JPEG':
+        image.save(buffer, format=image_format, quality=quality)
     else:
-        image.save(buffer, format=format)
+        image.save(buffer, format=image_format)
     # Get bytes and encode to base64
     buffer.seek(0)
     return base64.b64encode(buffer.getvalue()).decode('utf-8')
  
-
-if __name__=="__main__":
-    get_db_connection() 
