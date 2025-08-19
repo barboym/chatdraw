@@ -2,13 +2,11 @@ import pytest
 from sqlalchemy import select
 
 
-@pytest.mark.skip(reason="no db on github")
 def test_connection_works():
     from chatdraw.db import Sketch, get_db_session
     with get_db_session() as session:
         _ = session.execute(select(Sketch.sketch_id).limit(1)).first()
 
-@pytest.mark.skip(reason="no db on github")
 def test_insert_query():
     from chatdraw.db import Sketch, get_db_session
     with get_db_session() as session:

@@ -9,15 +9,13 @@ from typing import Any, Dict
 from sqlalchemy import Integer, String, JSON, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
 
-
 dotenv.load_dotenv()
-
-DB_DRIVERNAME="postgresql+psycopg2"
-DB_USER = os.environ["DB_USER"]
-DB_PASSWORD = os.environ["DB_PASSWORD"]
-DB_HOST = os.environ["DB_HOST"]
-DB_PORT = int(os.environ["DB_PORT"])
-DB_NAME = os.environ["DB_NAME"]
+DB_DRIVERNAME = "postgresql+psycopg2"
+DB_USER = os.environ.get("DB_USER", "postgres")
+DB_PASSWORD = os.environ.get("DB_PASSWORD", "postgres")
+DB_HOST = os.environ.get("DB_HOST", "localhost")
+DB_PORT = int(os.environ.get("DB_PORT", "5432"))
+DB_NAME = os.environ.get("DB_NAME", "postgres")
 
 DATABASE_URL = URL.create(DB_DRIVERNAME,DB_USER,DB_PASSWORD,DB_HOST,DB_PORT,DB_NAME)
 

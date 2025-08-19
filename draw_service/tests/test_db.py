@@ -3,7 +3,6 @@ from sqlalchemy import select
 from datetime import datetime
 from typing import Dict, Any
 
-@pytest.mark.skip(reason="no db on github")
 def test_sketch_insert_and_query():
     from chatdraw.db import Sketch, get_db_session
     with get_db_session() as session:
@@ -29,7 +28,6 @@ def test_sketch_insert_and_query():
         finally:
             session.rollback()
 
-@pytest.mark.skip(reason="no db on github")
 def test_sketch_unique_concept_constraint():
     from chatdraw.db import Sketch, get_db_session
     with get_db_session() as session:
