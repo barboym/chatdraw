@@ -2,7 +2,7 @@ import pytest
 from sqlalchemy import select
 from datetime import datetime
 from typing import Dict, Any
-from chatdraw.chatdraw.db import Sketch, get_db_session
+from chatdraw.db import Sketch, get_db_session
 
 def test_sketch_insert_and_query():
     with get_db_session() as session:

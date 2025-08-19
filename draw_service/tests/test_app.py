@@ -1,6 +1,5 @@
 from fastapi.testclient import TestClient
-import pytest
-from chatdraw.chatdraw.app import app 
+from chatdraw.app import app 
 
 client = TestClient(app)
 

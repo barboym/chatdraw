@@ -1,7 +1,6 @@
-import pytest
 from sqlalchemy import select
 
-from chatdraw.chatdraw.db import Sketch, get_db_session
+from chatdraw.db import Sketch, get_db_session
 
 
 def test_connection_works():
