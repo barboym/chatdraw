@@ -1,5 +1,5 @@
 
-name: Push Backend
+name: Draw Service Test
 
 on:
   push:
