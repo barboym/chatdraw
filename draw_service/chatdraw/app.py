@@ -42,6 +42,6 @@ async def send(
         )
     return chat_handler.process_message(message)
 
-app.mount("/", StaticFiles(directory='./dist', html=True), name='stati')
+app.mount("/", StaticFiles(directory='./dist', html=True), name='static')
 
 
