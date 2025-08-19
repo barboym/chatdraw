@@ -12,7 +12,7 @@ on:
       - '.github/workflows/frontend*.yaml'
 
 jobs:
-  deploy-frontend:
+  test-frontend:
     runs-on: ubuntu-latest
     defaults:
       run:

@@ -12,12 +12,24 @@ on:
       - '.github/workflows/draw_service*.yaml'      
 
 jobs:
-  test-and-build:
+  test-draw-service:
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: draw_service
     steps:
+      - name: Create a local Postgres DB
+        uses: ikalnytskyi/action-setup-postgres@v7
+        with:
+          username: postgres
+          password: postgres
+          database: postgres
+          port: 5432
+          postgres-version: "17"
+        id: postgres
+
+ 
+
       - name: Checkout code
         uses: actions/checkout@v4
 
