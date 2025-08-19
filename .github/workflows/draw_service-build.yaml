@@ -3,9 +3,9 @@ name: Draw Service Build
 
 on:
   workflow_run:
-  workflows: ["Draw Service Test"] 
-  types: [completed] 
-  branches: main 
+    workflows: ["Draw Service Test"] 
+    types: [completed] 
+    branches: main 
 
 
 jobs:
