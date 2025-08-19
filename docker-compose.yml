@@ -1,15 +1,20 @@
 services:
   postgres:
     image: postgres:17
-    container_name: drawdb 
+    container_name: drawdb-dep 
     environment:
-      - POSTGRES_PASSWORD=$DB_PASSWORD
-      - ${DB_LOCALPATH}:/var/lib/postgresql/data
+      - POSTGRES_PASSWORD=12345
+      - ~/pgdata_chatdraw:/var/lib/postgresql/data # for persistent data 
 
   server:
     image: mba333/chatdraw:latest
-    container_name: drawcore
+    container_name: drawcore-dep
     depends_on: [postgres]
     user: vscode
     ports:
-      - ${API_PORT}:80
+      - 8010:80
+    environment: 
+      - DB_PASSWORD=12345
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY
