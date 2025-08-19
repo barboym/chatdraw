@@ -16,6 +16,6 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: "../chatdraw/dist"
+    outDir: "../draw_service/dist"
   }
 })
