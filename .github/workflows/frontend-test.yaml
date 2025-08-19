@@ -4,8 +4,7 @@ name: Frontend Test
 on:
   push:
     paths:
-      - 'frontend/**'
-      - '.github/workflows/frontend*.yaml'
+      - 'frontend'
 
 jobs:
   test-frontend:

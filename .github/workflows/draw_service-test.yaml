@@ -5,7 +5,6 @@ on:
   push:
     paths:
       - 'draw_service'
-      - '.github/workflows/draw_service*.yaml'
 
 jobs:
   test-draw-service:

@@ -2,12 +2,10 @@
 name: Frontend Build
 
 on:
-  pull_request:
-    branches: 
-     - main
-    paths:
-      - 'frontend/**'
-      - '.github/workflows/frontend*.yaml'
+  workflow_run:
+  workflows: ["Frontend Test"] 
+  types: [completed] 
+  branches: main 
 
 jobs:
   build-frontend:
