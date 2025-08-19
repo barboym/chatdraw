@@ -3,9 +3,9 @@ name: Frontend Build
 
 on:
   workflow_run:
-  workflows: ["Frontend Test"] 
-  types: [completed] 
-  branches: main 
+    workflows: ["Frontend Test"] 
+    types: [completed] 
+    branches: main 
 
 jobs:
   build-frontend:
