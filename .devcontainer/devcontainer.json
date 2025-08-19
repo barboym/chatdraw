@@ -1,6 +1,6 @@
 {
   "name": "chatdraw",
-  "dockerComposeFile": "../docker-compose.yml",
+  "dockerComposeFile": "../docker-compose-dev.yml",
   "service": "server",
   "workspaceFolder": "/usr/src/app",
   "overrideCommand": true,
