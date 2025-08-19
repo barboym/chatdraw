@@ -69,7 +69,7 @@ def load_tutorial(concept:str) -> List[dict]:
     with get_db_session() as session:
         row = session.query(Sketch.model_json).filter(Sketch.concept == concept).first()
     if row:
-        answer_dict = row[0]
+        answer_dict = json.loads(row[0])
     else:
         answer_dict = add_concept_to_db(concept)
     tutorial = answer_dict["steps"]

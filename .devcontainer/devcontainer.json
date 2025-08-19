@@ -16,7 +16,7 @@
         "ms-vscode.js-debug-nightly",
         "dbaeumer.vscode-eslint",
         "EditorConfig.EditorConfig",
-        "GitHub.copilot-chat"
+        "GitHub.copilot"
       ]
     }
   },
