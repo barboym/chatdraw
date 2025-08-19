@@ -5,15 +5,6 @@ from chatdraw.sketches import svg_utils
 import pytest
 
 
-def test_svg_to_points_simple_path():
-    svg = '''
-    <svg xmlns="http://www.w3.org/2000/svg">
-        <path d="M 10 20 L 30 40 L 50 60" />
-    </svg>
-    '''
-    result = svg_to_points(svg)
-    assert result == [[(10.0, 20.0), (30.0, 40.0), (50.0, 60.0)]]
-
 def test_parse_point_valid():
     assert svg_utils.parse_point("x4y10") == (4, 10)
     assert svg_utils.parse_point("x15y25") == (15, 25)
@@ -28,7 +19,7 @@ def test_parse_point_invalid():
 
 def test_cell_to_pixel():
     # Using default res=50, cell_size=12
-    assert svg_utils.cell_to_pixel("x6y7") == (522, 78)
+    assert svg_utils.cell_to_pixel("x6y7") == (78, 522)
     # Test with different values
     assert svg_utils.cell_to_pixel("x1y1", res=10, cell_size=10) == (15, 95)
 

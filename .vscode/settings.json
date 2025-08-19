@@ -1,7 +1,8 @@
 {
-  "python.testing.pytestArgs": ["draw_service/tests"],
+  "python.testing.pytestArgs": ["tests"],
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true,
+  "python.testing.cwd": "${workspaceFolder}/draw_service",
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
     "tsconfig.json": "tsconfig.*.json, env.d.ts",
