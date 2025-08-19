@@ -25,7 +25,7 @@
                 "0.0.0.0"
             ],
             "jinja": true,
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}/draw_service"
         },
         {
             "name": "vitest",

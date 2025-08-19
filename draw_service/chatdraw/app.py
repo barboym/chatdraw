@@ -5,7 +5,6 @@ from fastapi.staticfiles import StaticFiles
 
 from chatdraw.chatflows.chat_system import ChatMessage, ChatResponse, ChatHandler
 from chatdraw.chatflows.drawtutorial import DrawingProject
-from chatdraw.chatflows.greeting import GreetingProject
 
 
 chat_handler = ChatHandler("greeting_start")
@@ -43,5 +42,6 @@ async def send(
         )
     return chat_handler.process_message(message)
 
-app.mount("/", StaticFiles(directory='dist', html=True), name='static')
+app.mount("/", StaticFiles(directory='./dist', html=True), name='static')
+
 

@@ -1,6 +1,6 @@
 FROM python:3.11-slim 
 
-WORKDIR /usr/src/app
+WORKDIR /usr/src/app/draw_service
 
 COPY . .
 

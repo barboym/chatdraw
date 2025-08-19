@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setChat } from '../setChat'
-
 /*
 Pseudocode:
 1. Import necessary testing utilities from Vitest.
@@ -101,7 +100,7 @@ describe('setChat', () => {
   })
 
   it('handles fetch error gracefully', async () => {
-    globalThis.fetch = vi.fn().mockRejectedValue(new Error('Network error')) as any
+    globalThis.fetch = vi.fn().mockRejectedValue(new Error('Network error'))
     const chat = setChat()
     await chat.sendMessage({ mtype: 'text', content: 'Test error' })
     // Only user message should be present
@@ -111,7 +110,7 @@ describe('setChat', () => {
       isUser: true,
     })
     // Restore fetch
-    globalThis.fetch = mockFetch as any
+    globalThis.fetch = mockFetch
   })
 
   it('chooseconcept context prints a message if it takes too long to respond', async () => {

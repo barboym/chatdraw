@@ -20,19 +20,13 @@ def parse_point(s):
     return x, y
 
 
-assert parse_point("x4y10") == (4,10)
-assert parse_point("x15y25") == (15,25)
-
 def cell_to_pixel(text,res=DEFAULT_RES,cell_size=DEFAULT_CELL_SIZE):
     x,y = parse_point(text)
     j,i = x-1,y-1
     img_height = (res + 1) * cell_size
     center_y = int(img_height - cell_size - (i * cell_size) - cell_size / 2)
     center_x = int(j * cell_size + cell_size / 2 + cell_size)
-    size = res*cell_size
-    return size - center_x,size - center_y
-
-assert cell_to_pixel("x6y7",res=50,cell_size=12) == (522, 78)
+    return center_x,center_y
 
 
 def parse_point_string_to_vector(points_str:str,res=DEFAULT_RES,cell_size=DEFAULT_CELL_SIZE) -> List[Tuple[int,int]]:

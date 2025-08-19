@@ -1,5 +1,5 @@
 [project]
-name = "chatdraw"
+name = "draw_service"
 version = "0.1.0"
 description = ""
 authors = [{ name="Moshe", email="barboym@gmail.com" }]
@@ -9,6 +9,7 @@ dependencies = [
     "uvicorn",
     "scipy",
     "psycopg2-binary",
+    "SQLAlchemy>=2.0",
     "python-dotenv",
     "pytest",
     "llama-index-llms-anthropic",

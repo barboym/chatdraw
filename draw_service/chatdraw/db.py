@@ -1,0 +1,62 @@
+import os
+from sqlalchemy import create_engine, URL
+from sqlalchemy.orm import scoped_session, sessionmaker, Session
+import dotenv
+from contextlib import contextmanager
+from datetime import datetime
+from typing import Any, Dict
+
+from sqlalchemy import Integer, String, JSON, DateTime
+from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
+
+from chatdraw.db_seed import DB_SEEDS
+
+dotenv.load_dotenv()
+DB_DRIVERNAME = "postgresql+psycopg2"
+DB_USER = os.environ.get("DB_USER", "postgres")
+DB_PASSWORD = os.environ.get("DB_PASSWORD", "postgres")
+DB_HOST = os.environ.get("DB_HOST", "localhost")
+DB_PORT = int(os.environ.get("DB_PORT", "5432"))
+DB_NAME = os.environ.get("DB_NAME", "postgres")
+
+DATABASE_URL = URL.create(DB_DRIVERNAME,DB_USER,DB_PASSWORD,DB_HOST,DB_PORT,DB_NAME)
+
+
+class Base(DeclarativeBase):
+    pass
+
+
+class Sketch(Base):
+    __tablename__ = "sketch"
+
+    sketch_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    concept: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    model_json: Mapped[Dict[str, Any]] = mapped_column(JSON, nullable=False)
+    model_name: Mapped[str] = mapped_column(String, nullable=False)
+    create_time: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+
+
+engine = create_engine(DATABASE_URL)
+
+@contextmanager
+def get_db_session():
+    """ Creates a context with an open SQLAlchemy session.
+    """
+    
+    db_session = scoped_session(sessionmaker(
+        bind=engine, autocommit=False, autoflush=True, class_=Session
+    ))
+    yield db_session
+    db_session.close()
+
+# initializing and seed the db
+Base.metadata.create_all(bind=engine)
+with get_db_session() as session:
+    for inst in DB_SEEDS:
+        if not session.query(Sketch).filter(Sketch.concept == inst["concept"]).first():
+            session.add(Sketch(
+                concept=inst["concept"],
+                model_json=inst["model_json"],
+                model_name=inst["model_name"]
+            ))
+            session.commit()

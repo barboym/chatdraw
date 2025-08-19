@@ -15,7 +15,8 @@
         "esbenp.prettier-vscode",
         "ms-vscode.js-debug-nightly",
         "dbaeumer.vscode-eslint",
-        "EditorConfig.EditorConfig"
+        "EditorConfig.EditorConfig",
+        "GitHub.copilot"
       ]
     }
   },
