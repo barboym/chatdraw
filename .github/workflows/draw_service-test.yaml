@@ -3,15 +3,20 @@ name: Draw Service Test
 
 on:
   push:
-    paths-ignore:
-      - 'frontend/**'
-      - '.*/**'
-      - 'dist/**'
-      
+    paths:
+      - 'draw_service'
+      - '.github/workflows/draw_service*.yaml'
+  pull_request:
+    paths:
+      - 'draw_service'
+      - '.github/workflows/draw_service*.yaml'      
 
 jobs:
   test-and-build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: draw_service
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
