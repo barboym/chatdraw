@@ -1,5 +1,5 @@
 {
-  "python.testing.pytestArgs": ["chatdraw/tests"],
+  "python.testing.pytestArgs": ["draw_service/tests"],
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true,
   "explorer.fileNesting.enabled": true,
