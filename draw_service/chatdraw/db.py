@@ -9,6 +9,8 @@ from typing import Any, Dict
 from sqlalchemy import Integer, String, JSON, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
 
+from draw_service.chatdraw.db_seed import DB_SEEDS
+
 dotenv.load_dotenv()
 DB_DRIVERNAME = "postgresql+psycopg2"
 DB_USER = os.environ.get("DB_USER", "postgres")
@@ -35,7 +37,6 @@ class Sketch(Base):
 
 
 engine = create_engine(DATABASE_URL)
-Base.metadata.create_all(bind=engine)
 
 @contextmanager
 def get_db_session():
@@ -48,4 +49,14 @@ def get_db_session():
     yield db_session
     db_session.close()
 
-
+# initializing and seed the db
+Base.metadata.create_all(bind=engine)
+with get_db_session() as session:
+    for inst in DB_SEEDS:
+        if not session.query(Sketch).filter(Sketch.concept == inst["concept"]).first():
+            session.add(Sketch(
+                concept=inst["concept"],
+                model_json=inst["model_json"],
+                model_name=inst["model_name"]
+            ))
+            session.commit()
