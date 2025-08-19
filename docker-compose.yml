@@ -12,9 +12,11 @@ services:
     depends_on: [postgres]
     user: vscode
     ports:
-      - 8010:80
-    environment: 
-      - DB_PASSWORD=12345
+      - 8010:80 # will be available on localhost:8010
+    environment: # postgres credentials and anthropic key
       - DB_HOST=postgres
+      - DB_NAME=postgres
+      - DB_USER=postgres
       - DB_PORT=5432
+      - DB_PASSWORD=12345
       - ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY
