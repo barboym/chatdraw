@@ -44,3 +44,4 @@ async def send(
 
 app.mount("/", StaticFiles(directory='./dist', html=True), name='static')
 
+
