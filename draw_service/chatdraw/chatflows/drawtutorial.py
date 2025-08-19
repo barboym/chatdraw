@@ -2,7 +2,7 @@ import itertools
 from chatdraw.chatflows.chat_system import AtomicMessage, ChatHandler, ChatMessage, ChatResponse, ProjectHandler
 from chatdraw.sketches.tutorial_creator_sketchagent import load_tutorial, normalize_concept_string
 from chatdraw.sketches.svg_utils import render_tutorial_to_pil
-from chatdraw.chatdraw.utils import encode_image_to_string
+from chatdraw.utils import encode_image_to_string
 
 
 class DrawingProject(ProjectHandler):

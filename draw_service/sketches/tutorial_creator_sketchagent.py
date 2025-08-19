@@ -3,7 +3,7 @@ import re
 from typing import Dict, List
 from chatdraw.sketches.svg_utils import add_smooth_vectors_to_tutorial
 from chatdraw.sketches.tutorial_agent_svg_examples import TutorialAgentSVGExmaples
-from chatdraw.chatdraw.db import get_db_session, Sketch
+from chatdraw.db import get_db_session, Sketch
 from dotenv import load_dotenv
 
 
