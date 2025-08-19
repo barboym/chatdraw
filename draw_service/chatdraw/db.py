@@ -9,7 +9,7 @@ from typing import Any, Dict
 from sqlalchemy import Integer, String, JSON, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
 
-from draw_service.chatdraw.db_seed import DB_SEEDS
+from chatdraw.db_seed import DB_SEEDS
 
 dotenv.load_dotenv()
 DB_DRIVERNAME = "postgresql+psycopg2"
