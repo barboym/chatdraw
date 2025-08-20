@@ -78,14 +78,14 @@ def render_tutorial_to_pil(strokes, res=DEFAULT_RES, cell_size=DEFAULT_CELL_SIZE
 
     # Draw all strokes
     for i, stroke in enumerate(strokes):
-        points = [(point[0], size - point[1]) for point in stroke]
+        points = [(point[0], point[1]) for point in stroke]
         # If this is the last stroke and highlighting is enabled
         fill=(0, 0, 0)
         draw.line(points, fill=fill, width=line_width)
     if highlighted_strokes is not None:
         for stroke in highlighted_strokes:
             fill=(0, 255, 0)
-            points = [(point[0], size - point[1]) for point in stroke]
+            points = [(point[0], point[1]) for point in stroke]
             draw.line(points, fill=fill, width=line_width)
     return image 
 
