@@ -1,5 +1,16 @@
 import json
 
+
+# DEFAULT_TUTORIAL_LIST = ( #TODO: add all those
+#     "giraffe",
+#     "monkey",
+#     "banana",
+#     "speaker",
+#     "superman",
+#     "pen-pineapple-apple-pen",
+# )
+
+
 DB_SEEDS = (
     dict(
         concept='giraffe',
