@@ -13,8 +13,8 @@ const strokes = ref<{x: number, y:number}[][]>([])
 const drawing = ref(false)
 const currentStroke = ref<{x: number, y: number}[]>([])
 const canvasRef = ref<HTMLCanvasElement | null>(null)
-const width = ref(600)
-const height = ref(600)
+const width = ref(400)
+const height = ref(400)
 
 function getCanvasPos(e: MouseEvent | TouchEvent) {
   const canvas = canvasRef.value

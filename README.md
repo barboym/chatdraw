@@ -1,28 +1,45 @@
 
-# ChatDraw 
+ChatDraw - You AI guide for drawing simple sketches
+===================================================
+### simple sketch drawing tutorials for whatever is on your mind
+ChatDraw is a chatbot application that teaches users to draw simple sketches step-by-step. 
+It generates drawing tutorials based on the concept the user provides, 
+guides users through each stroke, and provides feedback for each step. 
 
-## Description
-ChatDraw is a chatbot application that teaches users to draw simple sketches step-by-step. It generates drawing tutorials, guides users through each stroke, and provides feedback on submitted sketches. The backend is built with FastAPI and integrates with PostgreSQL for storing tutorials and user sketches. The frontend was built using vue.js and Typescript in a separate repo. The project features modular chat flows, AI-powered sketch generation, and drawing feedback.
+Quick Start
+============
+For quickly running the drawing chat service on your machine: 
+1. Install [docker compose](https://docs.docker.com/compose/install/)
+2. Get an [Anthropic](console.anthropic.com) API key and add it to your 
+ environment variables using:
+ ```bash
+ export ANTHROPIC_API_KEY=<your key>
+ ``` 
+ Add this line to ~/.profile for persistance 
 
-## Serving 
-For the time being the fronted is served by the backend. The bakend can be hosted any machine with a docker. 
+3. Download the [docker compose yaml](https://raw.githubusercontent.com/barboym/chatdraw/main/docker-compose.yml) from the repo and run it:
+```bash
+wget https://raw.githubusercontent.com/barboym/chatdraw/main/docker-compose.yml 
+docker compose up -d
+```
+The site should be available on localhost:8010. 
 
-## DataBase 
-Yet to be written
+Features
+=============
+![features](assets/chatdraw.gif)
 
-## Features:
 - AI-generated sketch tutorials
 - Step-by-step drawing guidance
 - Drawing feedback and scoring
-- FastAPI REST API
+- FastAPI 
 - PostgreSQL database integration
-- Extensible chat flow system
 
-## Project Structure: 
-chatdraw/ - core package with chat flows and sketch logic  
-app.py - FastAPI server entry point  
-tests/ - unit tests  
-Dockerfile and docker-compose.yml - containerization
 
-## Author: 
+Project Structure
+==================
+draw_service/ - core package with chat flows and sketch logic  
+frontend/ - vite project
+
+Author 
+===========
 Moshe Barboy
