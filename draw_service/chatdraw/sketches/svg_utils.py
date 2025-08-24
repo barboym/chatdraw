@@ -30,16 +30,25 @@ def add_smooth_vectors_to_tutorial(tutorial: dict) -> dict:
     return tutorial
 
 
-def scale_to_display(tutorial: dict) -> dict:
+def scale_to_display(tutorial: dict, res=DEFAULT_RES, cell_size=DEFAULT_CELL_SIZE,) -> dict:
     """
     Adds a scaled and shifted vectors to thetutorial
     """
     root = ET.fromstring(tutorial["svg_sketch"].strip())
-    width = float(root.get("width"))
-    height = float(root.get("height"))
+    width = root.get("width")
+    height = root.get("height")
+    if width is None or height is None:
+        print("Warning: SVG width or height not found, defaulting to 100.")
+        width = 100.0
+        height = 100.0
+    else:
+        width = float(width)
+        height = float(height)
+    
     dims = np.array([width,height])
-    scale = 600/dims.max()
-    shift = (600 - dims * scale) / 2
+    display_size = res * cell_size
+    scale = display_size/dims.max()
+    shift = (display_size - dims * scale) / 2
     for step in tutorial["steps"]:
         for stroke in step["strokes"]: 
             stroke["smoothed_vector_scaled"] = stroke["smoothed_vector"] * scale + shift
