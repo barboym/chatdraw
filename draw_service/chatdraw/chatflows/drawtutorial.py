@@ -54,7 +54,7 @@ What would you like to learn to draw today?""",
     def _draw_step(self, message: ChatMessage) -> ChatResponse:
         concept, step = message.context.split(",")
         step = int(step)
-        tutorial = load_tutorial(concept)
+        tutorial = load_tutorial(concept)["steps"]
 
         response = []
         # if step>1 and message.message.mtype=="image":
@@ -65,7 +65,7 @@ What would you like to learn to draw today?""",
         #     )
         if step==1:
             strokes = itertools.chain(*[step["strokes"] for step in tutorial])
-            smooth_strokes = [el["smoothed_vector"] for el in strokes]
+            smooth_strokes = [el["smoothed_vector_scaled"] for el in strokes]
             image_full = render_tutorial_to_pil(smooth_strokes)
             image_full_txt = encode_image_to_string(image_full)
             response += [
@@ -74,8 +74,8 @@ What would you like to learn to draw today?""",
             ]
         response.append(tutorial[step-1]["thinking"])
         strokes = itertools.chain(*[step["strokes"] for step in tutorial[:step]])
-        smooth_strokes = [el["smoothed_vector"] for el in strokes]   
-        smooth_strokes_highlight = [el["smoothed_vector"] for el in tutorial[step-1]["strokes"]]     
+        smooth_strokes = [el["smoothed_vector_scaled"] for el in strokes]   
+        smooth_strokes_highlight = [el["smoothed_vector_scaled"] for el in tutorial[step-1]["strokes"]]     
         image = render_tutorial_to_pil(smooth_strokes,highlighted_strokes=smooth_strokes_highlight)
         image_txt = encode_image_to_string(image)
         response += [

@@ -1,10 +1,10 @@
 import json
 import re
 from typing import Dict, List
-from chatdraw.sketches.svg_utils import add_smooth_vectors_to_tutorial
 from chatdraw.db import get_db_session, Sketch
-from draw_service.chatdraw.sketches.tutorial_agent_svg_chain import generate_tutorial
-
+from chatdraw.sketches.tutorial_agent_svg_chain import generate_tutorial
+from chatdraw.sketches.svg_utils import add_smooth_vectors_to_tutorial, scale_to_display
+import xml.etree.ElementTree as ET
 
 def add_concept_to_db(concept) -> Dict:
     with get_db_session() as session:
@@ -47,7 +47,7 @@ def normalize_concept_string(s: str) -> str:
     return s
         
 
-def load_tutorial(concept:str) -> List[dict]:
+def load_tutorial(concept:str) -> dict:
     """
     General method for fetching tutorials
     """
@@ -59,9 +59,9 @@ def load_tutorial(concept:str) -> List[dict]:
         answer_dict = json.loads(row[0])
     else:
         answer_dict = add_concept_to_db(concept)
-    tutorial = answer_dict["steps"]
-    add_smooth_vectors_to_tutorial(tutorial)
-    return tutorial
+    add_smooth_vectors_to_tutorial(answer_dict)
+    scale_to_display(answer_dict)
+    return answer_dict
 
 
 
