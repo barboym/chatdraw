@@ -2,13 +2,14 @@ from typing import List
 from pydantic import BaseModel, Field
 from llama_index.llms.anthropic import Anthropic
 from llama_index.core import PromptTemplate
-from draw_service.chatdraw.sketches.svg_parsing import element_to_path, parse_svg_steps, strip_svg_fence
-from draw_service.chatdraw.sketches.tutorial_agent_svg_chain import Step
+from chatdraw.sketches.svg_parsing import SUPPORTED_ELEMENTS, element_to_path, parse_svg_steps, strip_svg_fence
+from chatdraw.sketches.tutorial_agent_svg_chain import Step
 
 prompt_svg = PromptTemplate(template=(
     'generate an svg file depicting a {concept}. '
+    'The svg should be black and white. '
     'Make sure there are comments explaining what the elements represent. '
-    'No preambles. Output an svg string. '
+    'No preambles. Output an svg string only. '
 ))
 
 class TutorialOutput(BaseModel):
@@ -33,14 +34,16 @@ def generate_tutorial(concept:str) -> TutorialOutput:
     steps = parse_svg_steps(svg_str)
     for step in steps:
         comment = step.pop("comment")
-        step["strokes"]=list(
-            map(
-                lambda x:{
-                    "path":element_to_path(x).get('d'),
-                    "id":comment
-                },step.pop('elements')
-            )
+        elements = step.pop('elements')
+        elements_supported = filter(
+            lambda x:x.tag.split("}")[-1] in SUPPORTED_ELEMENTS,elements)
+        elements_path = map(
+            lambda x:{
+                "path":element_to_path(x).get('d'),
+                "id":comment
+            },elements_supported
         )
+        step["strokes"]=list(elements_path)
         step["thinking"] = comment
     tutorial_dict = {
         "model_name":llm.model,

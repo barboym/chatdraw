@@ -129,6 +129,17 @@ def polygon_to_path(el: ET.Element) -> ET.Element:
     d = "M" + " L".join(points.split()) + " Z"
     return ET.Element("path", {"d": d})
 
+
+SUPPORTED_ELEMENTS = (
+    "rect",
+    "circle",
+    "ellipse",
+    "line",
+    "polyline",
+    "polygon",
+    "path",
+)
+
 def element_to_path(el: ET.Element) -> ET.Element:
     tag = el.tag.split("}")[-1]  # strip namespace if present
     if tag == "rect":
