@@ -8,10 +8,10 @@ class CommentedTreeBuilder(ET.TreeBuilder):
     def __init__(self):
         super().__init__()
 
-    def comment(self, data):
+    def comment(self, data: str | None):
         self.start(ET.Comment, {})
-        self.data(data)
-        self.end(ET.Comment)
+        self.data(data if data is not None else "")
+        return self.end("!--")
         
 
 def strip_svg_fence(svg_str: str) -> str:
