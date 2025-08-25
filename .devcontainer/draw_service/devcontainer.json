@@ -1,6 +1,6 @@
 {
-  "name": "chatdraw",
-  "dockerComposeFile": "../docker-compose-dev.yml",
+  "name": "draw_service",
+  "dockerComposeFile": "../../docker-compose-dev.yml",
   "service": "server",
   "workspaceFolder": "/usr/src/app",
   "overrideCommand": true,
@@ -10,12 +10,12 @@
         "ms-python.python",
         "ms-python.vscode-pylance",
         "ms-python.debugpy",
-        "Vue.volar",
-        "vitest.explorer",
-        "esbenp.prettier-vscode",
-        "ms-vscode.js-debug-nightly",
-        "dbaeumer.vscode-eslint",
-        "EditorConfig.EditorConfig",
+        // "Vue.volar",
+        // "vitest.explorer",
+        // "esbenp.prettier-vscode",
+        // "ms-vscode.js-debug-nightly",
+        // "dbaeumer.vscode-eslint",
+        // "EditorConfig.EditorConfig",
         "GitHub.copilot"
       ]
     }

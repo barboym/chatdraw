@@ -1,10 +1,8 @@
-import json
 import re
-from typing import Dict, List
-from chatdraw.sketches.svg_utils import add_smooth_vectors_to_tutorial
-from chatdraw.sketches.tutorial_agent_svg_examples import TutorialAgentSVGExmaples
+from typing import Dict
 from chatdraw.db import get_db_session, Sketch
-
+from chatdraw.sketches.tutorial_agent_svg import generate_tutorial
+from chatdraw.sketches.svg_utils import add_smooth_vectors_to_tutorial, scale_to_display
 
 def add_concept_to_db(concept) -> Dict:
     with get_db_session() as session:
@@ -12,8 +10,9 @@ def add_concept_to_db(concept) -> Dict:
         if existing is not None:
             print(f"The {concept} concept is already available")
             return existing.model_json
-        answer_dict = TutorialAgentSVGExmaples().create_tutorial(concept)
-        sketch = Sketch(concept=concept, model_json=json.dumps(answer_dict), model_name=answer_dict["model_name"])
+        answer_dict = generate_tutorial(concept)
+        answer_dict = answer_dict.model_dump()
+        sketch = Sketch(concept=concept, model_json=answer_dict, model_name=answer_dict["model_name"])
         session.add(sketch)
         session.commit()
         print(f"Added the {concept} to the db")
@@ -47,7 +46,7 @@ def normalize_concept_string(s: str) -> str:
     return s
         
 
-def load_tutorial(concept:str) -> List[dict]:
+def load_tutorial(concept:str) -> dict:
     """
     General method for fetching tutorials
     """
@@ -56,12 +55,12 @@ def load_tutorial(concept:str) -> List[dict]:
     with get_db_session() as session:
         row = session.query(Sketch.model_json).filter(Sketch.concept == concept).first()
     if row:
-        answer_dict = json.loads(row[0])
+        answer_dict = row[0]
     else:
         answer_dict = add_concept_to_db(concept)
-    tutorial = answer_dict["steps"]
-    add_smooth_vectors_to_tutorial(tutorial)
-    return tutorial
+    add_smooth_vectors_to_tutorial(answer_dict)
+    scale_to_display(answer_dict)
+    return answer_dict
 
 
 

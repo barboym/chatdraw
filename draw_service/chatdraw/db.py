@@ -56,7 +56,7 @@ with get_db_session() as session:
         if not session.query(Sketch).filter(Sketch.concept == inst["concept"]).first():
             session.add(Sketch(
                 concept=inst["concept"],
-                model_json=inst["model_json"],
+                model_json=inst,
                 model_name=inst["model_name"]
             ))
             session.commit()

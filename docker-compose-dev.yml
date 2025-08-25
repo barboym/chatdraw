@@ -18,3 +18,12 @@ services:
       - ${API_PORT}:80
     volumes:
       - .:/usr/src/app:cached    
+
+  # score_server:
+  #   container_name: score_service
+  #   user: vscode
+  #   build: ./score_service
+  #   ports:
+  #     - ${SCORE_API_PORT}:80
+  #   volumes:
+  #     - .:/usr/src/app:cached    

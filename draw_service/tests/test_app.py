@@ -1,6 +1,5 @@
 from fastapi.testclient import TestClient
 from chatdraw.app import app
-from chatdraw.db import Sketch, get_db_session 
 
 client = TestClient(app)
 
