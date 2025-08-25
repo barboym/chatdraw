@@ -1,10 +1,9 @@
 import json
 import re
-from typing import Dict, List
+from typing import Dict
 from chatdraw.db import get_db_session, Sketch
-from chatdraw.sketches.tutorial_agent_svg_chain import generate_tutorial
+from chatdraw.sketches.tutorial_agent_svg import generate_tutorial
 from chatdraw.sketches.svg_utils import add_smooth_vectors_to_tutorial, scale_to_display
-import xml.etree.ElementTree as ET
 
 def add_concept_to_db(concept) -> Dict:
     with get_db_session() as session:
@@ -13,6 +12,7 @@ def add_concept_to_db(concept) -> Dict:
             print(f"The {concept} concept is already available")
             return existing.model_json
         answer_dict = generate_tutorial(concept)
+        answer_dict = answer_dict.model_dump()
         sketch = Sketch(concept=concept, model_json=json.dumps(answer_dict), model_name=answer_dict["model_name"])
         session.add(sketch)
         session.commit()
