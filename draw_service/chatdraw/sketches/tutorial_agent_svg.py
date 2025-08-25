@@ -3,7 +3,6 @@ from pydantic import BaseModel, Field
 from llama_index.llms.anthropic import Anthropic
 from llama_index.core import PromptTemplate
 from chatdraw.sketches.svg_parsing import SUPPORTED_ELEMENTS, element_to_path, parse_svg_steps, strip_svg_fence
-from chatdraw.sketches.tutorial_agent_svg_chain import Step
 
 prompt_svg = PromptTemplate(template=(
     'generate an svg file depicting a {concept}. '
@@ -11,6 +10,14 @@ prompt_svg = PromptTemplate(template=(
     'Make sure there are comments explaining what the elements represent. '
     'No preambles. Output an svg string only. '
 ))
+
+class SingleStroke(BaseModel):
+    path: str = Field(description="The d attribute of a <path/> element")
+    id: str = Field(description="A short descriptive identifier for the stroke, explaining which part of the sketch it corresponds to")
+
+class Step(BaseModel):
+    thinking: str = Field(description="Which part in the plan is being implemented")
+    strokes: List[SingleStroke] = Field(description="Stokes that generate this part of the sketch")
 
 class TutorialOutput(BaseModel):
     model_name: str

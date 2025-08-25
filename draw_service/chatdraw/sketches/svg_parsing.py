@@ -1,6 +1,5 @@
 from typing import List
 import xml.etree.ElementTree as ET
-from xml.etree.ElementTree import TreeBuilder
 import re
 
 class CommentedTreeBuilder(ET.TreeBuilder):
@@ -44,10 +43,8 @@ def parse_svg_steps(svg_str) -> List[dict]:
             # If we already collected elements under a previous comment, store it
             if current_step["comment"] or current_step["elements"]:
                 steps.append(current_step)
-            if node.text is None: 
-                raise ValueError("empty comments means I don't know what Im drawing")
             # Start new step
-            current_step = {"comment": node.text.strip(), "elements": []}
+            current_step = {"comment": str(node.text).strip(), "elements": []}
         else:
             # Normal SVG element
             current_step["elements"].append(node)

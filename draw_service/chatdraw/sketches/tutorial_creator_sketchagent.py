@@ -1,4 +1,3 @@
-import json
 import re
 from typing import Dict
 from chatdraw.db import get_db_session, Sketch
@@ -13,7 +12,7 @@ def add_concept_to_db(concept) -> Dict:
             return existing.model_json
         answer_dict = generate_tutorial(concept)
         answer_dict = answer_dict.model_dump()
-        sketch = Sketch(concept=concept, model_json=json.dumps(answer_dict), model_name=answer_dict["model_name"])
+        sketch = Sketch(concept=concept, model_json=answer_dict, model_name=answer_dict["model_name"])
         session.add(sketch)
         session.commit()
         print(f"Added the {concept} to the db")
@@ -56,7 +55,7 @@ def load_tutorial(concept:str) -> dict:
     with get_db_session() as session:
         row = session.query(Sketch.model_json).filter(Sketch.concept == concept).first()
     if row:
-        answer_dict = json.loads(row[0])
+        answer_dict = row[0]
     else:
         answer_dict = add_concept_to_db(concept)
     add_smooth_vectors_to_tutorial(answer_dict)

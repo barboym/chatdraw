@@ -1,75 +1,77 @@
 
 
-from chatdraw.sketches.svg_utils import svg_to_points
 from chatdraw.sketches import svg_utils
-import pytest
+import numpy as np
 
+def test_make_smooth_stroke_returns_100_points():
+    # Simple straight line path
+    path = "M 0 0 L 100 100"
+    points = svg_utils.make_smooth_stroke(path)
+    assert isinstance(points, list)
+    assert len(points) == 100
+    assert all(isinstance(pt, tuple) and len(pt) == 2 for pt in points)
 
-def test_parse_point_valid():
-    assert svg_utils.parse_point("x4y10") == (4, 10)
-    assert svg_utils.parse_point("x15y25") == (15, 25)
-
-def test_parse_point_invalid():
-    with pytest.raises(ValueError):
-        svg_utils.parse_point("4y10")
-    with pytest.raises(ValueError):
-        svg_utils.parse_point("x4z10")
-    with pytest.raises(ValueError):
-        svg_utils.parse_point("x4y")
-
-def test_cell_to_pixel():
-    # Using default res=50, cell_size=12
-    assert svg_utils.cell_to_pixel("x6y7") == (78, 522)
-    # Test with different values
-    assert svg_utils.cell_to_pixel("x1y1", res=10, cell_size=10) == (15, 95)
-
-def test_parse_point_string_to_vector_multiple():
-    points_str = "x1y1 x2y2 x3y3"
-    result = svg_utils.parse_point_string_to_vector(points_str, res=10, cell_size=10)
-    assert isinstance(result, list)
-    assert len(result) == 3
-    assert all(isinstance(pt, tuple) and len(pt) == 2 for pt in result)
-
-def test_parse_point_string_to_vector_single():
-    points_str = "x1y1"
-    result = svg_utils.parse_point_string_to_vector(points_str, res=10, cell_size=10)
-    assert isinstance(result, list)
-    assert len(result) == 5
-    assert all(isinstance(pt, tuple) and len(pt) == 2 for pt in result)
-
-def test_make_smooth_stroke_short():
-    # 1 point
-    pts = [(1, 2)]
-    assert svg_utils.make_smooth_stroke(pts) == pts
-    # 2 points
-    pts = [(1, 2), (3, 4)]
-    assert svg_utils.make_smooth_stroke(pts) == pts
-
-def test_make_smooth_stroke_quadratic():
-    pts = [(0, 0), (5, 10), (10, 0)]
-    smoothed = svg_utils.make_smooth_stroke(pts)
-    assert isinstance(smoothed, list)
-    assert len(smoothed) == 100
-    assert all(isinstance(pt, tuple) and len(pt) == 2 for pt in smoothed)
-
-def test_make_smooth_stroke_cubic():
-    pts = [(0, 0), (5, 10), (10, 0), (15, 5)]
-    smoothed = svg_utils.make_smooth_stroke(pts)
-    assert isinstance(smoothed, list)
-    assert len(smoothed) == 100
-
-def test_add_smooth_vectors_to_tutorial():
-    tutorial = [
-        {"strokes": [{"points": "x1y1 x2y2"}]},
-        {"strokes": [{"points": "x3y3 x4y4"}]}
-    ]
+def test_add_smooth_vectors_to_tutorial_adds_key():
+    tutorial = {
+        "steps": [
+            {"strokes": [{"path": "M 0 0 L 10 10"}]},
+            {"strokes": [{"path": "M 5 5 L 15 15"}]}
+        ]
+    }
     result = svg_utils.add_smooth_vectors_to_tutorial(tutorial)
-    for step in result:
+    for step in result["steps"]:
         for stroke in step["strokes"]:
-            assert "vector" in stroke
             assert "smoothed_vector" in stroke
-            assert isinstance(stroke["vector"], list)
-            assert isinstance(stroke["smoothed_vector"], list)
+            assert isinstance(stroke["smoothed_vector"], np.ndarray)
+            assert stroke["smoothed_vector"].shape == (100, 2)
+
+def test_scale_to_display_scales_and_shifts():
+    tutorial = {
+        "svg_raw": '<svg width="100" height="100"></svg>',
+        "steps": [
+            {"strokes": [{"smoothed_vector": np.array([[0, 0], [100, 100]])}]}
+        ]
+    }
+    result = svg_utils.scale_to_display(tutorial, res=10, cell_size=10)
+    for step in result["steps"]:
+        for stroke in step["strokes"]:
+            assert "smoothed_vector_scaled" in stroke
+            arr = stroke["smoothed_vector_scaled"]
+            assert arr.shape == (2, 2)
+            # Should be shifted/scaled into a 100x100 box
+            assert np.all(arr >= 0)
+            assert np.all(arr <= 100)
+
+def test_scale_to_display_missing_svg_dims(monkeypatch):
+    tutorial = {
+        "svg_raw": '<svg></svg>',
+        "steps": [
+            {"strokes": [{"smoothed_vector": np.array([[0, 0], [100, 100]])}]}
+        ]
+    }
+    result = svg_utils.scale_to_display(tutorial, res=10, cell_size=10)
+    for step in result["steps"]:
+        for stroke in step["strokes"]:
+            assert "smoothed_vector_scaled" in stroke
+
+def test_render_tutorial_to_pil_with_highlighted_and_multiple_strokes():
+    strokes = [[(0, 0), (50, 50)], [(10, 90), (90, 10)]]
+    highlighted = [[(25, 25), (75, 75)]]
+    img = svg_utils.render_tutorial_to_pil(strokes, res=10, cell_size=10, highlighted_strokes=highlighted)
+    assert img.size == (100, 100)
+    assert img.mode == "RGB"
+
+def test_svg_to_points_with_path():
+    svg = (
+        '<svg xmlns="http://www.w3.org/2000/svg">'
+        '<path d="M 0 0 L 10 10" /></svg>'
+    )
+    points = svg_utils.svg_to_points(svg)
+    assert isinstance(points, list)
+    assert len(points) == 1
+    assert isinstance(points[0], list)
+    assert len(points[0]) == 100
+    assert all(isinstance(pt, tuple) and len(pt) == 2 for pt in points[0])
 
 def test_render_tutorial_to_pil_basic():
     strokes = [[(10, 10), (20, 20)], [(30, 30), (40, 40)]]
@@ -82,30 +84,6 @@ def test_render_tutorial_to_pil_highlighted():
     highlighted = [[(30, 30), (40, 40)]]
     img = svg_utils.render_tutorial_to_pil(strokes, res=10, cell_size=10, highlighted_strokes=highlighted)
     assert img.size == (100, 100)
-
-def test_parse_path():
-    d = "M 10 20 L 30 40 L 50 60"
-    points = svg_utils.parse_path(d)
-    assert points == [(10, 20), (30, 40), (50, 60)]
-
-def test_svg_to_points_simple_path():
-    svg = '''
-    <svg xmlns="http://www.w3.org/2000/svg">
-        <path d="M 10 20 L 30 40 L 50 60" />
-    </svg>
-    '''
-    result = svg_utils.svg_to_points(svg)
-    assert result == [[(10, 20), (30, 40), (50, 60)]]
-
-def test_svg_to_points_multiple_paths():
-    svg = '''
-    <svg xmlns="http://www.w3.org/2000/svg">
-        <path d="M 1 2 L 3 4" />
-        <path d="M 5 6 L 7 8" />
-    </svg>
-    '''
-    result = svg_utils.svg_to_points(svg)
-    assert result == [[(1, 2), (3, 4)], [(5, 6), (7, 8)]]
 
 def test_svg_to_points_no_paths():
     svg = '<svg xmlns="http://www.w3.org/2000/svg"></svg>'
