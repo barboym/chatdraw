@@ -34,7 +34,7 @@ def scale_to_display(tutorial: dict, res=DEFAULT_RES, cell_size=DEFAULT_CELL_SIZ
     """
     Adds a scaled and shifted vectors to thetutorial
     """
-    root = ET.fromstring(tutorial["svg_sketch"].strip())
+    root = ET.fromstring(tutorial["svg_raw"].strip())
     width = root.get("width")
     height = root.get("height")
     if width is None or height is None:
