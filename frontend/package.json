@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check \"build-only {@}\" --",
+    "clean": "rm -rf ../draw_service/dist",
+    "build-only-clean": "run-s clean build-only",
+    "build": "run-p type-check \"build-only-clean {@}\" --",
     "preview": "vite preview",
     "test:unit": "vitest",
     "build-only": "vite build",
