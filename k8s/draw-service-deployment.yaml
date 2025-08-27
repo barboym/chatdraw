@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: server-dep
+  template:
+    metadata:
+      labels:
+        app: server-dep
+    spec:
+      containers:
+        - name: server
+          image: mba333/chatdraw:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: DB_HOST
+              value: "postgres-dep"
+            - name: DB_NAME
+              value: "postgres"
+            - name: DB_USER
+              value: "postgres"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_PASSWORD
+              value: "postgres"
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: anthropic-secret
+                  key: ANTHROPIC_API_KEY
+          securityContext:
+            runAsUser: 1000 # maps to 'vscode' in Docker
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: server-dep
+spec:
+  selector:
+    app: server-dep
+  ports:
+    - port: 8010
+      targetPort: 80
