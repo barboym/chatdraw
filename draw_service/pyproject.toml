@@ -2,6 +2,7 @@
 name = "draw_service"
 version = "0.1.0"
 description = ""
+requires-python = ">=3.11"
 authors = [{ name="Moshe", email="barboym@gmail.com" }]
 dependencies = [
     "fastapi[standard]",
