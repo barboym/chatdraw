@@ -18,9 +18,6 @@
         // "EditorConfig.EditorConfig",
         "GitHub.copilot"
       ]
-    },
-    "settings": {
-        "python.defaultInterpreterPath": "/usr/src/app/draw_service/.venv/bin/python"
     }
   },
   "remoteUser": "vscode",
