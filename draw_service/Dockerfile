@@ -1,12 +1,10 @@
-FROM ghcr.io/astral-sh/uv:0.8.14-python3.11-bookworm-slim
+FROM python:3.11-slim 
 
 WORKDIR /usr/src/app/draw_service
-# should make UV install everything to the system Python
-ARG UV_SYSTEM_PYTHON=1
 
 COPY . .
 
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh &&  uv sync
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh && pip install --no-cache-dir -e .
 
 COPY . .
 
@@ -31,6 +29,6 @@ RUN groupadd --gid $USER_GID $USERNAME \
 # [Optional] Set the default user. Omit if you want to keep the default as root.
 USER $USERNAME
 
-CMD ["uv","run","uvicorn","app:app","--host","0.0.0.0","--port","80"]
+CMD ["uvicorn","app:app","--host","0.0.0.0","--port","80"]
 
 
